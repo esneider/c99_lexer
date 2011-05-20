@@ -1,0 +1,28 @@
+#include "function_types.h"
+
+
+void function_type_copy ( struct function_type* dest, const struct function_type* src ) {
+
+
+}
+
+
+bool function_type_compare ( const struct function_type* type_a,
+                             const struct function_type* type_b ) {
+
+
+}
+
+
+bool function_type_compatible ( const struct function_type* type_a,
+                                const struct function_type* type_b ) {
+
+
+}
+
+
+void function_type_free ( struct function_type* type ) {
+
+
+}
+

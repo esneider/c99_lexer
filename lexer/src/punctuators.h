@@ -1,0 +1,133 @@
+#ifndef _PUNCTUATORS_H_
+#define _PUNCTUATORS_H_
+
+#include <stdlib.h>
+
+
+#define NUM_PUNCTUATORS     ( sizeof( punctuators ) / sizeof( punctuators[0] ) )
+#define MAX_LEN_PUNCTUATORS sizeof( punctuators[0] )
+
+
+enum punctuators {
+	PNT_NONE,
+	PNT_NOT,
+	PNT_NOT_EQUAL,
+	PNT_HASH,
+	PNT_DOUBLE_HASH,
+	PNT_MODULUS,
+	PNT_HASH_ALT,
+	PNT_DOUBLE_HASH_ALT,
+	PNT_MODULUS_ASSIGN,
+	PNT_RIGHT_CURLY_BRACKET_ALT,
+	PNT_BITWISE_AND,
+	PNT_AND,
+	PNT_BITWISE_AND_ASSIGN,
+	PNT_LEFT_ROUND_BRACKET,
+	PNT_RIGHT_ROUND_BRACKET,
+	PNT_MULTIPLICATION,
+	PNT_MULTIPLICATION_ASSIGN,
+	PNT_PLUS,
+	PNT_INCREMENT,
+	PNT_PLUS_ASSIGN,
+	PNT_COMMA,
+	PNT_MINUS,
+	PNT_DECREMENT,
+	PNT_MINUS_ASSIGN,
+	PNT_POINTER_MEMBER,
+	PNT_MEMBER,
+	PNT_ELLIPSIS,
+	PNT_DIVISION,
+	PNT_DIVISION_ASSIGN,
+	PNT_COLON,
+	PNT_RIGHT_SQUARE_BRACKET_ALT,
+	PNT_SEMICOLON,
+	PNT_LESS,
+	PNT_LEFT_CURLY_BRACKET_ALT,
+	PNT_LEFT_SQUARE_BRACKET_ALT,
+	PNT_LEFT_SHIFT,
+	PNT_LEFT_SHIFT_ASSIGN,
+	PNT_LESS_EQUAL,
+	PNT_ASSIGN,
+	PNT_EQUAL,
+	PNT_GREATER,
+	PNT_GREATER_EQUAL,
+	PNT_RIGHT_SHIFT,
+	PNT_RIGHT_SHIFT_ASSIGN,
+	PNT_CONDITIONAL,
+	PNT_LEFT_SQUARE_BRACKET,
+	PNT_RIGHT_SQUARE_BRACKET,
+	PNT_BITWISE_XOR,
+	PNT_BITWISE_XOR_ASSIGN,
+	PNT_LEFT_CURLY_BRACKET,
+	PNT_BITWISE_OR,
+	PNT_BITWISE_OR_ASSIGN,
+	PNT_OR,
+	PNT_RIGHT_CURLY_BRACKET,
+	PNT_BITWISE_COMPLEMENT
+};
+
+
+static const char punctuators[][5] = {
+	"",
+	"!",
+	"!=",
+	"#",
+	"##",
+	"%",
+	"%:",
+	"%:%:",
+	"%=",
+	"%>",
+	"&",
+	"&&",
+	"&=",
+	"(",
+	")",
+	"*",
+	"*=",
+	"+",
+	"++",
+	"+=",
+	",",
+	"-",
+	"--",
+	"-=",
+	"->",
+	".",
+	"...",
+	"/",
+	"/=",
+	":",
+	":>",
+	";",
+	"<",
+	"<%",
+	"<:",
+	"<<",
+	"<<=",
+	"<=",
+	"=",
+	"==",
+	">",
+	">=",
+	">>",
+	">>=",
+	"?",
+	"[",
+	"]",
+	"^",
+	"^=",
+	"{",
+	"|",
+	"|=",
+	"||",
+	"}",
+	"~"
+};
+
+
+enum punctuators is_punctuator ( const char* token );
+
+
+#endif /* _PUNCTUATORS_H_ */
+

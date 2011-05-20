@@ -1,0 +1,11 @@
+Extended C Syntax
+=================
+
+C99 with the following extensions
+
+* C++ namespaces
+* gcc typeof
+* C++0x auto
+* function overloading
+* C++ templates
+* lambda calculus
