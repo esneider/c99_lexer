@@ -56,9 +56,8 @@ enum keyword_token is_keyword (const char* token) {
 	const char (*pos)[ MAX_LEN_KEYWORDS ] = bsearch(token, keywords, NUM_KEYWORDS,
                                                     MAX_LEN_KEYWORDS, (cmp_f)strcmp);
 
-	if (!pos) {
+	if (!pos)
 		pos = keywords;
-    }
 
 	return pos - keywords;
 }
