@@ -219,7 +219,7 @@ struct token_list {
  *
  * @return a linear list of tokens
  */
-struct token_list tokenize(char* buffer);
+struct token_list tokenize (char* buffer);
 
 
 #endif /* _TOKEN_H_ */

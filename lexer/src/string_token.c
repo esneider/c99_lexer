@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
 
-size_t is_string(const char* token) {
+size_t is_string (const char* token) {
 
 	size_t ret = 2;
 

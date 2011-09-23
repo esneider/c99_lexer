@@ -65,10 +65,10 @@ static const char punctuators[][5] = {
 #define MAX_LEN_PUNCTUATORS sizeof(punctuators[0])
 
 
-typedef int (*cmp_f)( const void*, const void* );
+typedef int (*cmp_f)(const void*, const void*);
 
 
-enum punctuator_token is_punctuator(const char* token) {
+enum punctuator_token is_punctuator (const char* token) {
 
 	const char (*pos)[ MAX_LEN_PUNCTUATORS ] =
 		bsearch(token, punctuators, NUM_PUNCTUATORS, MAX_LEN_PUNCTUATORS, (cmp_f)strcmp);
