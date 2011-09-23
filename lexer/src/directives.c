@@ -49,7 +49,8 @@ struct return_directive is_directive (char* token) {
 	char* end = token;
 	for ( ; ; ) {
 		aux = strspn(end, space_character);
-		if ( !end[aux] || end[aux] == '\n' ) break;
+		if (!end[aux] || end[aux] == '\n')
+            break;
 		end += aux;
 		end += strcspn(end, delimiter_character);
 	}
@@ -58,35 +59,35 @@ struct return_directive is_directive (char* token) {
 
 	token += strspn(token, space_character); // TODO: check if this is redundant
 
-	aux = strspn(token, digit_character);
+	token += aux = strspn(token, digit_character);
 
-	if ( aux ) {
+	if (aux) {
 
-		struct return_directive dir = { size, { DIR_OUTPUT, 0 } };
+		struct return_directive dir = {size, DIR_OUTPUT, 0};
 
-		sscanf( token, "%u", &dir.directive.flags );
+		if (!sscanf(token, "%u", &dir.directive.flags))
+            return (struct return_directive){size, DIR_OTHER, 0};
+
 		dir.directive.flags <<= 4;
 
-		token += aux;
-		token += aux = strspn( token, space_character );
-		token += aux = is_string( token );
+		token += strspn(token, space_character);
+		token += aux = is_string(token);
 
-		for ( ; aux; token += aux ) {
+        size_t flag = 0;
 
-			token += aux = strspn( token, space_character );
+        while (sscanf(token, " %zu", &flag)) {
 
-			if ( !token[0] || token[0] == '\n' )
-				return dir;
+            if (flag < 1 || flag > 4)
+                break;
 
-			size_t flag = 4;
-			sscanf( token, "%zu", &flag );
-			if ( flag > 0 && flag < 5 )
-				dir.directive.flags |= 1 << (flag - 1);
+			dir.directive.flags |= 1 << (flag - 1);
+            flag = 0;
+        }
 
-			aux = strspn( token, digit_character );
-		}
+        if (flag < 1 || flag > 4)
+	        return (struct return_directive){size, DIR_OTHER, 0};
 
-		return (struct return_directive){ size, { DIR_OTHER, 0 } };
+        return dir;
 	}
 
 	aux = strspn(token, identifier_character);
