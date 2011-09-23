@@ -1,6 +1,8 @@
 #ifndef _TOKEN_H_
 #define _TOKEN_H_
 
+#include <stdlib.h>
+
 
 enum punctuator_token {
 

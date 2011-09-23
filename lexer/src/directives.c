@@ -1,32 +1,64 @@
-#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include "directives.h"
-#include "strings.h"
-#include "characters.h"
-
-typedef int (*cmp_f)( const void*, const void* );
+#include <string.h>
+#include "character_constants.h"
 
 
-struct return_directive is_directive ( char* token ) {
+static const char const directives[][8] = {
+	"",
+	"",
+	"",
+	"",
+	"define",
+	"elif",
+	"else",
+	"endif",
+	"error",
+	"if",
+	"ifdef",
+	"ifndef",
+	"include",
+	"line",
+	"pragma",
+	"undef"
+};
+
+
+#define NUM_DIRECTIVES     (sizeof(directives) / sizeof(directives[0]))
+#define MAX_LEN_DIRECTIVES sizeof(directives[0])
+
+
+struct return_directive {
+
+	size_t               len;
+    enum directive_token type;
+    unsigned int         flag;
+};
+
+
+typedef int (*cmp_f)(const void*, const void*);
+
+
+struct return_directive is_directive (char* token) {
 
 	size_t aux;
 
-	if ( token++[0] != '#' )
-		return (struct return_directive){ 0, { DIR_NONE, 0 } };
+	if (token++[0] != '#')
+		return (struct return_directive){0, DIR_NONE, 0};
 
 	char* end = token;
 	for ( ; ; ) {
-		aux = strspn( end, space_character );
-		if ( !end[ aux ] || end[ aux ] == '\n' ) break;
+		aux = strspn(end, space_character);
+		if ( !end[aux] || end[aux] == '\n' ) break;
 		end += aux;
-		end += strcspn( end, delimiter_character );
+		end += strcspn(end, delimiter_character);
 	}
 
 	size_t size = end - token + 1;
 
-	token += strspn( token, space_character );
+	token += strspn(token, space_character); // TODO: check if this is redundant
 
-	aux = strspn( token, digit_character );
+	aux = strspn(token, digit_character);
 
 	if ( aux ) {
 
@@ -57,24 +89,23 @@ struct return_directive is_directive ( char* token ) {
 		return (struct return_directive){ size, { DIR_OTHER, 0 } };
 	}
 
-	aux = strspn( token, identifier_character );
+	aux = strspn(token, identifier_character);
 
-	if ( !aux ) {
-		if ( !token[0] || token[0] == '\n' )
-			return (struct return_directive){ size, { DIR_EMPTY, 0 } };
+	if (!aux) {
+		if (!token[0] || token[0] == '\n')
+			return (struct return_directive){size, DIR_EMPTY, 0};
 
-		return (struct return_directive){ size, { DIR_OTHER, 0 } };
+		return (struct return_directive){size, DIR_OTHER, 0};
 	}
 
-	char c = token[ aux ];
-	token[ aux ] = 0;
+	char c = token[aux];
+	token[aux] = 0;
 
-	const char (*pos)[ MAX_LEN_DIRECTIVES ] =
-		bsearch( token, directives, NUM_DIRECTIVES, sizeof( directives[0] ),
-		         (cmp_f)strcmp );
+	const char (*pos)[ MAX_LEN_DIRECTIVES ] = bsearch(token, directives, NUM_DIRECTIVES,
+                                                      MAX_LEN_DIRECTIVES, (cmp_f)strcmp);
 
-	token[ aux ] = c;
+	token[aux] = c;
 
-	return (struct return_directive){ size, { pos ? pos - directives : DIR_OTHER, 0 } };
+	return (struct return_directive){size, pos ? pos - directives : DIR_OTHER, 0};
 }
 
