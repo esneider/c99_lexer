@@ -103,8 +103,9 @@ struct directive is_directive ( char* token ) {
 	char c = token[ aux ];
 	token[ aux ] = 0;
 
-	const char (*pos)[ MAX_LEN_DIRECTIVES ] = bsearch( token, directives, NUM_DIRECTIVES,
-                                                       MAX_LEN_DIRECTIVES, (cmp_f)strcmp );
+	const char (*pos)[ MAX_LEN_DIRECTIVES ] =
+                 bsearch( token, directives, NUM_DIRECTIVES,
+                          MAX_LEN_DIRECTIVES, (cmp_f)strcmp );
 
 	token[ aux ] = c;
 

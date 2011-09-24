@@ -1,5 +1,3 @@
-/// TODO!!
-
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -8,16 +6,10 @@
 #include "character_constants.h"
 
 
-struct lexer_constant {
-
-	enum constants type;
-	enum modifiers modifier;
-};
-
-
-struct return_constant {
-	size_t len;
-	struct lexer_constant constant;
+struct constant {
+	size_t                       len;
+	enum constant_token          type;
+	enum constant_token_modifier modifier;
 };
 
 
@@ -37,10 +29,15 @@ static size_t is_char_constant ( const char* token ) {
 	if ( token++[0] != '\'' )
 		return 0;
 
-	for ( ; token[0] != '\'' || token[-1] == '\\'; token++, ret++ )
-		if ( !token[0] || token[0] == '\n' )
-			return 0;
+	for ( bool slash = false; token[0] != '\'' || slash; token++, ret++ ) {
 
+        slash = !slash && token[0] == '\\';
+
+        if ( !token[0] || token[0] == '\n' )
+			return 0;
+    }
+
+    /* '' or L'' */
 	if ( ret < 4 && token[-1] == '\'' )
 		return 0;
 
