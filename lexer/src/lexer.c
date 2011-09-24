@@ -43,10 +43,10 @@ static void next_token_start ( struct token* token ) {
 
 		switch ( token->ptr[0] ) {
 
-			case '\n':
+			case '\n': {
 				token->col = 0;
 				token->line++;
-				break;
+			} break;
 
 			case '\r':
 				token->col = 0;

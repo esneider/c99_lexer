@@ -1,9 +1,23 @@
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <limits.h>
-#include "constants.h"
-#include "characters.h"
+#include "character_constants.h"
+
+
+struct lexer_constant {
+
+	enum constants type;
+	enum modifiers modifier;
+};
+
+
+struct return_constant {
+	size_t len;
+	struct lexer_constant constant;
+};
+
 
 #define WIDE_CHAR_FLAG  ( 1 << ( sizeof( size_t ) * CHAR_BIT - 2 ) )
 
