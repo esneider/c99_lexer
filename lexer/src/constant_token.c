@@ -93,20 +93,21 @@ static void get_integer_modifier ( const char* token, struct constant* ret ) {
 }
 
 
-static struct return_constant is_constant ( const char* token ) {
+static struct constant is_constant ( const char* token ) {
 
-	struct return_constant ret;
+	struct constant ret;
 
 	ret.len = is_char_constant( token );
 
 	if ( ret.len ) {
 
-		ret.constant = (struct lexer_constant){ CONST_CHARACTER, MOD_CHARACTER };
+		ret.type = CONST_CHARACTER;
+        ret.modifier = CONST_MOD_CHARACTER;
 
 		if ( ret.len & WIDE_CHAR_FLAG ) {
 
 			ret.len &= ~WIDE_CHAR_FLAG;
-			ret.constant.modifier = MOD_WIDE_CHARACTER;
+			ret.modifier = MOD_WIDE_CHARACTER;
 		}
 
 		return ret;
@@ -132,18 +133,18 @@ static struct return_constant is_constant ( const char* token ) {
 			ret.len++;
 
 			aux = strspn( token, hexadecimal_digit_character );
-
-		} else
+		} else {
 			aux = strspn( token, octal_digit_character );
-
-	} else
+        }
+	} else {
 		aux = strspn( token, digit_character );
+    }
 
 	ret.len += aux;
 	token += aux;
 	empty = !aux;
 
-	/* integer */
+	/* integer TODO!!! */
 
 	if ( !token[0] || !strchr( "eEpP.89", token[0] ) ) {
 
