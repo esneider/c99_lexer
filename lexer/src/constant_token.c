@@ -45,7 +45,7 @@ static size_t is_char_constant ( const char* token ) {
 }
 
 
-static void get_integer_modifier ( const char* token, struct return_constant* ret ) {
+static void get_integer_modifier ( const char* token, struct constant* ret ) {
 
 	char aux[3];
 
@@ -77,14 +77,15 @@ static void get_integer_modifier ( const char* token, struct return_constant* re
 
 	if ( aux[0] == 'L' ) {
 
-		ret->len ++;
-		ret->constant.modifier = MOD_SIGNED_LONG;
-
 		if ( aux[1] == 'L' ) {
 
-			ret->len ++;
+			ret->len += 2;
 			ret->constant.modifier = MOD_SIGNED_LONG_LONG;
+            return;
 		}
+
+		ret->len ++;
+		ret->constant.modifier = MOD_SIGNED_LONG;
 		return;
 	}
 
@@ -92,7 +93,7 @@ static void get_integer_modifier ( const char* token, struct return_constant* re
 }
 
 
-struct return_constant is_constant ( const char* token ) {
+static struct return_constant is_constant ( const char* token ) {
 
 	struct return_constant ret;
 

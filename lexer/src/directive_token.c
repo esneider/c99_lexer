@@ -40,7 +40,7 @@ struct directive {
 typedef int (*cmp_f) ( const void*, const void* );
 
 
-struct directive is_directive ( char* token ) {
+static struct directive is_directive ( char* token ) {
 
 	size_t aux;
 

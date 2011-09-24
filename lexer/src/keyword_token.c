@@ -52,7 +52,7 @@ static const char keywords[][11] = {
 typedef int (*cmp_f) ( const void*, const void* );
 
 
-enum keyword_token is_keyword ( const char* token ) {
+static enum keyword_token is_keyword ( const char* token ) {
 
 	const char (*pos)[ MAX_LEN_KEYWORDS ] =
                  bsearch( token, keywords, NUM_KEYWORDS,

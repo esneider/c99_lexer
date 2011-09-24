@@ -3,7 +3,7 @@
 #include "character_constants.h"
 
 
-size_t is_identifier ( const char* token ) {
+static size_t is_identifier ( const char* token ) {
 
 	if ( !token[0] )
 		return 0;
