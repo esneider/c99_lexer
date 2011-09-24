@@ -28,7 +28,7 @@ static const char const directives[][8] = {
 #define MAX_LEN_DIRECTIVES sizeof(directives[0])
 
 
-struct return_directive {
+struct directive {
 
 	size_t               len;
     enum directive_token type;
@@ -39,12 +39,12 @@ struct return_directive {
 typedef int (*cmp_f)(const void*, const void*);
 
 
-struct return_directive is_directive (char* token) {
+struct directive is_directive (char* token) {
 
 	size_t aux;
 
 	if (token++[0] != '#')
-		return (struct return_directive){0, DIR_NONE, 0};
+		return (struct directive){0, DIR_NONE, 0};
 
 	char* end = token;
 	for ( ; ; ) {
@@ -63,10 +63,10 @@ struct return_directive is_directive (char* token) {
 
 	if (aux) {
 
-		struct return_directive dir = {size, DIR_OUTPUT, 0};
+		struct directive dir = {size, DIR_OUTPUT, 0};
 
 		if (!sscanf(token, "%u", &dir.directive.flags))
-            return (struct return_directive){size, DIR_OTHER, 0};
+            return (struct directive){size, DIR_OTHER, 0};
 
 		dir.directive.flags <<= 4;
 
@@ -85,7 +85,7 @@ struct return_directive is_directive (char* token) {
         }
 
         if (flag < 1 || flag > 4)
-	        return (struct return_directive){size, DIR_OTHER, 0};
+	        return (struct directive){size, DIR_OTHER, 0};
 
         return dir;
 	}
@@ -94,9 +94,9 @@ struct return_directive is_directive (char* token) {
 
 	if (!aux) {
 		if (!token[0] || token[0] == '\n')
-			return (struct return_directive){size, DIR_EMPTY, 0};
+			return (struct directive){size, DIR_EMPTY, 0};
 
-		return (struct return_directive){size, DIR_OTHER, 0};
+		return (struct directive){size, DIR_OTHER, 0};
 	}
 
 	char c = token[aux];
@@ -107,6 +107,6 @@ struct return_directive is_directive (char* token) {
 
 	token[aux] = c;
 
-	return (struct return_directive){size, pos ? pos - directives : DIR_OTHER, 0};
+	return (struct directive){size, pos ? pos - directives : DIR_OTHER, 0};
 }
 
