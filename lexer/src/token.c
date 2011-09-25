@@ -2,10 +2,19 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include "lexer.h"
+
+#include "token.h"
+
+#include "keyword_token.c"
+#include "identifier_token.c"
+#include "constant_token.c"
+#include "string_token.c"
+#include "punctuator_token.c"
+#include "directive_token.c"
 
 
 struct token_node {
+
 	struct token       token;
 	struct token_node* next;
 	struct token_node* prev;
@@ -13,6 +22,7 @@ struct token_node {
 
 
 struct token_head {
+
 	size_t size;
 	struct token_node* first;
 	struct token_node* last;
