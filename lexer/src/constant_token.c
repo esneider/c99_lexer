@@ -164,9 +164,9 @@ static struct constant is_constant ( const char* token ) {
 	/* floating TODO!! */
 
 	if ( hex )
-		ret.constant.type = CONST_HEXADECIMAL_FLOATING;
+		ret.type = CONST_HEXADECIMAL_FLOATING;
 	else
-		ret.constant.type = CONST_DECIMAL_FLOATING;
+		ret.type = CONST_DECIMAL_FLOATING;
 
 	if ( zero ) {
 		ret.len += aux = strspn( token, digit_character );
