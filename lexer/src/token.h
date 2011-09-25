@@ -165,7 +165,7 @@ enum constant_token_modifier {
 };
 
 
-enum token {
+enum tokens {
 
 	TOK_NONE,
 	TOK_KEYWORD,
@@ -185,7 +185,7 @@ struct token {
     char*  ptr;
     size_t len;
 
-    enum token type;
+    enum tokens type;
 
     union {
         enum keyword_token    keyword;
@@ -195,7 +195,7 @@ struct token {
     } info;
 
     union {
-        unsigned int                 directive_flags;
+        unsigned int                 directive_flag;
         enum constant_token_modifier constant_modifier;
     } extra;
 

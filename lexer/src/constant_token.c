@@ -2,7 +2,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <limits.h>
 #include "character_constants.h"
 
 
@@ -14,7 +13,7 @@ struct constant {
 };
 
 
-#define WIDE_CHAR_FLAG  ( 1 << ( sizeof( size_t ) * CHAR_BIT - 2 ) )
+#define WIDE_CHAR_FLAG  0x1000000
 
 
 static size_t is_char_constant ( const char* token ) {
@@ -58,21 +57,21 @@ static void get_integer_modifier ( const char* token, struct constant* ret ) {
 		 ( strncmp( aux, "LLU", 3 ) == 0 && token[0] == token[1] ) )
 	{
 		ret->len += 3;
-		ret->constant.modifier = MOD_UNSIGNED_LONG_LONG;
+		ret->modifier = CONST_MOD_UNSIGNED_LONG_LONG;
 		return;
 	}
 
 	if ( strncmp( aux, "UL", 2 ) == 0 || strncmp( aux, "LU", 2 ) == 0 ) {
 
 		ret->len += 2;
-		ret->constant.modifier = MOD_UNSIGNED_LONG;
+		ret->modifier = CONST_MOD_UNSIGNED_LONG;
 		return;
 	}
 
 	if ( aux[0] == 'U' ) {
 
 		ret->len ++;
-		ret->constant.modifier = MOD_UNSIGNED_INT;
+		ret->modifier = CONST_MOD_UNSIGNED_INT;
 		return;
 	}
 
@@ -81,16 +80,16 @@ static void get_integer_modifier ( const char* token, struct constant* ret ) {
 		if ( aux[1] == 'L' ) {
 
 			ret->len += 2;
-			ret->constant.modifier = MOD_SIGNED_LONG_LONG;
+			ret->modifier = CONST_MOD_SIGNED_LONG_LONG;
             return;
 		}
 
 		ret->len ++;
-		ret->constant.modifier = MOD_SIGNED_LONG;
+		ret->modifier = CONST_MOD_SIGNED_LONG;
 		return;
 	}
 
-	ret->constant.modifier = MOD_SIGNED_INT;
+	ret->modifier = CONST_MOD_SIGNED_INT;
 }
 
 
@@ -108,7 +107,7 @@ static struct constant is_constant ( const char* token ) {
 		if ( ret.len & WIDE_CHAR_FLAG ) {
 
 			ret.len &= ~WIDE_CHAR_FLAG;
-	¿		ret.modifier = MOD_WIDE_CHARACTER;
+			ret.modifier = CONST_MOD_WIDE_CHARACTER;
 		}
 
 		return ret;
@@ -218,17 +217,17 @@ static struct constant is_constant ( const char* token ) {
 		return (struct constant){ 0, CONST_NONE, 0 };
 
     /* modifier */
-	ret.constant.modifier = MOD_DOUBLE;
+	ret.modifier = CONST_MOD_DOUBLE;
 
 	if ( toupper( token[0] ) == 'F' ) {
 
-		ret.constant.modifier = MOD_FLOAT;
+		ret.modifier = CONST_MOD_FLOAT;
 		ret.len++;
 		token++;
 	} else
 	if ( toupper( token[0] ) == 'L' ) {
 
-		ret.constant.modifier = MOD_LONG_DOUBLE;
+		ret.modifier = CONST_MOD_LONG_DOUBLE;
 		ret.len++;
 		token++;
 	}

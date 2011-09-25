@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "character_constants.h"
+#include "utils.h"
 
 
 static const char const directives[][8] = {
@@ -37,9 +38,6 @@ struct directive {
 };
 
 
-typedef int (*cmp_f) ( const void*, const void* );
-
-
 static struct directive is_directive ( char* token ) {
 
 	size_t aux;
@@ -66,10 +64,10 @@ static struct directive is_directive ( char* token ) {
 
 		struct directive dir = { size, DIR_OUTPUT, 0 };
 
-		if ( !sscanf( token, "%u", &dir.directive.flags ) )
+		if ( !sscanf( token, "%u", &dir.flag ) )
             return (struct directive){ size, DIR_OTHER, 0 };
 
-		dir.directive.flags <<= 4;
+		dir.flag <<= 4;
 
 		token += strspn( token, space_character );
 		token += aux = is_string( token );
@@ -81,7 +79,7 @@ static struct directive is_directive ( char* token ) {
             if ( flag < 1 || flag > 4 )
                 break;
 
-			dir.directive.flags |= 1 << (flag - 1);
+			dir.flag |= 1 << (flag - 1);
             flag = 0;
         }
 

@@ -4,7 +4,6 @@
 #include <ctype.h>
 
 #include "token.h"
-
 #include "keyword_token.c"
 #include "identifier_token.c"
 #include "constant_token.c"
@@ -76,6 +75,7 @@ static void next_token_start ( struct token* token ) {
 }
 
 
+/* We are all cache-friendly around here :) */
 static struct token_list make_token_list ( struct token_head* head ) {
 
 	struct token_list list;
@@ -84,8 +84,8 @@ static struct token_list make_token_list ( struct token_head* head ) {
 	list.tokens = malloc( list.size * sizeof( struct token ) );
 	assert( list.tokens );
 
-	struct token_node* node = head->first, *aux;
-	struct token* pos = list.tokens;
+	struct token_node *node = head->first, *aux;
+	struct token *pos = list.tokens;
 
 	for ( ; node; pos++ ) {
 
@@ -105,51 +105,47 @@ static struct token_list make_token_list ( struct token_head* head ) {
 }
 
 
-static void next_token_end ( struct token* token, struct token_head* head ) {
+static void next_token_end ( struct token_head* head, struct token* token ) {
 
+    /* if starting a new line, check for directive */
 	if ( !head->size || head->last->token.line != token->line ) {
 
-		struct return_directive dir = is_directive( token->ptr );
+		struct directive dir = is_directive( token->ptr );
 
-		if ( dir.directive.type ) {
+		if ( dir.type ) {
 
-			token->len = dir.len;
-			token->type = TOK_DIRECTIVE;
-			token->extra.directive = dir.directive;
-
-			list_push_back( head, token );
-			token->ptr += token->len;
+			token->len                  = dir.len;
+			token->type                 = TOK_DIRECTIVE;
+			token->info.directive       = dir.type;
+            token->extra.directive_flag = dir.flag;
 
 			return;
 		}
 	}
 
+    /* check for literal strings */
 	token->len = is_string( token->ptr );
 
 	if ( token->len ) {
 
 		token->type = TOK_STRING;
+		return;
+	}
 
-		list_push_back( head, token );
-		token->ptr += token->len;
+    /* now for constants */
+	struct constant con = is_constant( token->ptr );
+
+	if ( con.type ) {
+
+		token->len                     = con.len;
+		token->type                    = TOK_CONSTANT;
+		token->info.constant           = con.type;
+        token->extra.constant_modifier = con.modifier;
 
 		return;
 	}
 
-	struct return_constant con = is_constant( token->ptr );
-
-	if ( con.constant.type ) {
-
-		token->type = TOK_CONSTANT;
-		token->len = con.len;
-		token->extra.constant = con.constant;
-
-		list_push_back( head, token );
-		token->ptr += token->len;
-
-		return;
-	}
-
+    /* check for identifiers and keywords */
 	token->len = is_identifier( token->ptr );
 
 	if ( token->len ) {
@@ -157,50 +153,37 @@ static void next_token_end ( struct token* token, struct token_head* head ) {
 		char c = token->ptr[ token->len ];
 		token->ptr[ token->len ] = 0;
 
-		token->extra.keyword_index = is_keyword( token->ptr );
+		token->info.keyword = is_keyword( token->ptr );
 
 		token->ptr[ token->len ] = c;
 
-		if ( token->extra.keyword_index )
-			token->type = TOK_KEYWORD;
-		else
-			token->type = TOK_IDENTIFIER;
-
-		list_push_back( head, token );
-		token->ptr += token->len;
+        token->type = token->info.keyword ? TOK_KEYWORD : TOK_IDENTIFIER;
 
 		return;
 	}
 
+    /* and finally, puntuators */
 	for ( int i = MAX_LEN_PUNCTUATORS; --i; ) {
 
 		char c = token->ptr[i];
 		token->ptr[i] = 0;
 
-		token->extra.punctuator_index = is_punctuator( token->ptr );
+		token->info.punctuator = is_punctuator( token->ptr );
 
 		token->ptr[i] = c;
 
-		if ( token->extra.punctuator_index ) {
+		if ( token->info.punctuator ) {
 
 			token->type = TOK_PUNCTUATOR;
-			token->len = strlen( punctuators[ token->extra.punctuator_index ] );
-
-			list_push_back( head, token );
-			token->ptr += token->len;
+			token->len = strlen( punctuators[ token->info.punctuator ] );
 
 			return;
 		}
 	}
 
+    /* else, error */
 	token->type = TOK_NONE;
-	token->len = 0;
-
-	for ( char* ptr = token->ptr; ptr[0] && !isspace( ptr[0] ); ptr++ )
-		token->len++;
-
-	list_push_back( head, token );
-	token->ptr += token->len;
+    token->len  = strcspn( token->ptr, delimiter_character );
 }
 
 
@@ -209,17 +192,21 @@ struct token_list tokenize ( char* buffer ) {
 	struct token_head head = { 0, NULL, NULL };
 	struct token      token;
 
-	token.line = token.col = 0;
-	token.ptr = buffer;
+	token.line = 1;
+    token.col  = 0;
+	token.ptr  = buffer;
 
 	for ( ; ; ) {
+
 		next_token_start( &token );
 
 		if ( !token.ptr[0] )
 			return make_token_list( &head );
 
-		next_token_end( &token, &head );
+		next_token_end( &head, &token );
+        list_push_back( &head, &token );
 
+        token.ptr += token.len;
 		token.col += token.len;
 	}
 }

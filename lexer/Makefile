@@ -13,7 +13,9 @@ PREPROCESSOR  =
 
 LIBRARIES     =
 
-SOURCES_DIRS  = src
+SOURCES       = src/token
+
+SOURCES_DIRS  =
 
 INCLUDE_DIRS  = src
 
@@ -31,9 +33,10 @@ MAKE_FILES    =
 
 
 DIR      = $(shell pwd)
-SRC_DIR  = $(addprefix $(DIR)/,$(SOURCES_DIRS))#
-INC_DIR  = $(addprefix $(DIR)/,$(INCLUDE_DIRS))#
-OBJ_DIR  = $(addprefix $(DIR)/,$(OBJECTS_DIRS))#
+SRC      = $(addprefix $(DIR)/,$(SOURCES))
+SRC_DIR  = $(addprefix $(DIR)/,$(SOURCES_DIRS))
+INC_DIR  = $(addprefix $(DIR)/,$(INCLUDE_DIRS))
+OBJ_DIR  = $(addprefix $(DIR)/,$(OBJECTS_DIRS))
 
 C_FLAGS += $(addprefix -I ,$(INC_DIR))
 C_FLAGS += $(addprefix -l ,$(LIBRARIES))
@@ -53,10 +56,13 @@ debug: compile
 release: override C_FLAGS += $(RELEASE_FLAGS)
 release: compile
 
-compile: clean output $(SRC_DIR)
+compile: clean output $(SRC_DIR) $(SRC)
 
 $(SRC_DIR):
 	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@)/*.c
+
+$(SRC):
+	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@).c
 
 clean:
 	@rm -rf $(OUTPUT_DIR)
