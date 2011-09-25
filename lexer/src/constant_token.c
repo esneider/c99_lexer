@@ -174,6 +174,7 @@ static struct constant is_constant ( const char* token ) {
 		token += aux;
 	}
 
+    /* fractional part */
 	if ( token[0] == '.' ) {
 
 		point = true;
@@ -192,6 +193,7 @@ static struct constant is_constant ( const char* token ) {
 			return (struct constant){ 0, CONST_NONE, 0 };
 	}
 
+    /* exponent part */
 	if ( strchr( hex ? "pP" : "eE", token[0] ) && token[0] ) {
 
 		exponent = true;
@@ -215,6 +217,7 @@ static struct constant is_constant ( const char* token ) {
 	if ( !exponent && ( hex || !point ) )
 		return (struct constant){ 0, CONST_NONE, 0 };
 
+    /* modifier */
 	ret.constant.modifier = MOD_DOUBLE;
 
 	if ( toupper( token[0] ) == 'F' ) {
