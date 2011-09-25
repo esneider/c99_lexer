@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "character_constants.h"
 
 
 static const char keywords[][11] = {
@@ -58,8 +59,19 @@ static enum keyword_token is_keyword ( const char* token ) {
                  bsearch( token, keywords, NUM_KEYWORDS,
                           MAX_LEN_KEYWORDS, (cmp_f)strcmp );
 
-	if ( !pos )
-		pos = keywords;
+
+	if ( !pos ) {
+
+        pos = keywords;
+
+    } else {
+         /* check that a non-identifier-character follows */
+
+        char c = token[ strlen( pos ) ]; /* TODO: optimize the hell out of this strlen */
+
+        if ( strchr( identifier_character, c ) && c )
+            pos = keywords;
+    }
 
 	return pos - keywords;
 }

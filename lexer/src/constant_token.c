@@ -107,7 +107,7 @@ static struct constant is_constant ( const char* token ) {
 		if ( ret.len & WIDE_CHAR_FLAG ) {
 
 			ret.len &= ~WIDE_CHAR_FLAG;
-			ret.modifier = MOD_WIDE_CHARACTER;
+	¿		ret.modifier = MOD_WIDE_CHARACTER;
 		}
 
 		return ret;
@@ -144,27 +144,24 @@ static struct constant is_constant ( const char* token ) {
 	token += aux;
 	empty = !aux;
 
-	/* integer TODO!!! */
+	/* integer */
 
 	if ( !token[0] || !strchr( "eEpP.89", token[0] ) ) {
 
 		if ( empty && ( hex || !zero ) )
-			return (struct return_constant){ 0, { CONST_NONE, 0 } };
+			return (struct constant){ 0, CONST_NONE, 0 };
 
 		if ( hex )
-			ret.constant.type = CONST_HEXADECIMAL;
+			ret.type = CONST_HEXADECIMAL;
 		else
-		if ( zero && !empty )
-			ret.constant.type = CONST_OCTAL;
-		else
-			ret.constant.type = CONST_DECIMAL;
+            ret.type = zero && !empty ? CONST_OCTAL : CONST_DECIMAL;
 
 		get_integer_modifier( token, &ret );
 
 		return ret;
 	}
 
-	/* floating */
+	/* floating TODO!! */
 
 	if ( hex )
 		ret.constant.type = CONST_HEXADECIMAL_FLOATING;
