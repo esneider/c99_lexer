@@ -7,6 +7,7 @@
 
 
 struct constant {
+
 	size_t                       len;
 	enum constant_token          type;
 	enum constant_token_modifier modifier;
@@ -161,14 +162,14 @@ static struct constant is_constant ( const char* token ) {
 		return ret;
 	}
 
-	/* floating TODO!! */
+	/* floating */
 
 	if ( hex )
 		ret.type = CONST_HEXADECIMAL_FLOATING;
 	else
 		ret.type = CONST_DECIMAL_FLOATING;
 
-	if ( zero ) {
+	if ( zero && !hex ) {
 		ret.len += aux = strspn( token, digit_character );
 		token += aux;
 	}
@@ -176,8 +177,8 @@ static struct constant is_constant ( const char* token ) {
 	if ( token[0] == '.' ) {
 
 		point = true;
-		token++;
 		ret.len++;
+		token++;
 
 		if ( hex )
 			aux = strspn( token, hexadecimal_digit_character );
@@ -188,14 +189,14 @@ static struct constant is_constant ( const char* token ) {
 		token += aux;
 
 		if ( empty && !aux )
-			return (struct return_constant){ 0, { CONST_NONE, 0 } };
+			return (struct constant){ 0, CONST_NONE, 0 };
 	}
 
-	if ( token[0] && strchr( "eEpP", token[0] ) ) {
+	if ( strchr( hex ? "pP" : "eE", token[0] ) && token[0] ) {
 
 		exponent = true;
-		token++;
 		ret.len++;
+		token++;
 
 		if ( token[0] == '+' || token[0] == '-' ) {
 			token++;
@@ -208,11 +209,11 @@ static struct constant is_constant ( const char* token ) {
 		token += aux;
 
 		if ( !aux )
-			return (struct return_constant){ 0, { CONST_NONE, 0 } };
+			return (struct constant){ 0, CONST_NONE, 0 };
 	}
 
 	if ( !exponent && ( hex || !point ) )
-		return (struct return_constant){ 0, { CONST_NONE, 0 } };
+		return (struct constant){ 0, CONST_NONE, 0 };
 
 	ret.constant.modifier = MOD_DOUBLE;
 
