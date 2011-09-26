@@ -9,6 +9,8 @@ C99 with the following extensions
 * function overloading
 * C++ templates
 * lambda calculus
+* default parameters
+* named parameters
 
 
 Tendria que poder correrse codigo C en tiempo de compilacion.. una ampliacion de los templates.. verdadero meta-programming en tiempo de compilacion. Generalizacion del concepto de constantes como parametros de templates..
