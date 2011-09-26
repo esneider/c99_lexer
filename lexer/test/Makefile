@@ -57,17 +57,17 @@ release: compile
 compile: output $(OBJS)
 
 $(OBJS): %.o: %.c
-    $(CC) $(C_FLAGS) $(OBJECT_DIRS)/*.o $(<) -o $(OUTPUT_DIR)$(@F:.o=)
+	$(CC) $(C_FLAGS) $(OBJECT_DIRS)/*.o $(<) -o $(OUTPUT_DIR)$(@F:.o=)
 
 clean:
-    @rm -rf $(OUTPUT_DIR)
+	@rm -rf $(OUTPUT_DIR)
 
 output:
-    @mkdir -p $(OUTPUT_DIR)
+	@mkdir -p $(OUTPUT_DIR)
 
 $(addsuffix _run,$(OBJS)):
-    @echo -n "$(@F:.o_run=) ... "
-    @./$(OUTPUT_DIR)$(@F:.o_run=)
-    @valgrind ./$(OUTPUT_DIR)$(@F:.o_run=)
+	@echo -n "$(@F:.o_run=) ... "
+	@./$(OUTPUT_DIR)$(@F:.o_run=)
+	@valgrind ./$(OUTPUT_DIR)$(@F:.o_run=)
 
 run: $(addsuffix _run,$(OBJS))
