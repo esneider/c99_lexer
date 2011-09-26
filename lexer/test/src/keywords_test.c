@@ -6,51 +6,51 @@
 
 
 const char* input[] = {
-	"feq",
-	"ferggerwgwer",
-	"",
-	"continue",
-	"3654",
-	"#@%%^%@!",
-	" \"'",
-	"auto",
-	"_Bool",
-	"int",
-	"(){}[]",
-	"_Imaginary"
+    "feq",
+    "ferggerwgwer",
+    "",
+    "continue",
+    "3654",
+    "#@%%^%@!",
+    " \"'",
+    "auto",
+    "_Bool",
+    "int",
+    "(){}[]",
+    "_Imaginary"
 };
 
 
 int expect[] = {
-	KWD_NONE,
-	KWD_NONE,
-	KWD_NONE,
-	KWD_CONTINUE,
-	KWD_NONE,
-	KWD_NONE,
-	KWD_NONE,
-	KWD_AUTO,
-	KWD__BOOL,
-	KWD_INT,
-	KWD_NONE,
-	KWD__IMAGINARY
+    KWD_NONE,
+    KWD_NONE,
+    KWD_NONE,
+    KWD_CONTINUE,
+    KWD_NONE,
+    KWD_NONE,
+    KWD_NONE,
+    KWD_AUTO,
+    KWD__BOOL,
+    KWD_INT,
+    KWD_NONE,
+    KWD__IMAGINARY
 };
 
 
 int main ( void ) {
 
-	for( int i = 0; i < (int)NUM_INPUT; i++ ) {
+    for( int i = 0; i < (int)NUM_INPUT; i++ ) {
 
-		int ret = is_keyword( input[i] );
+        int ret = is_keyword( input[i] );
 
-		if ( ret != expect[i] ) {
-			printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
-			return 1;
-		}
-	}
+        if ( ret != expect[i] ) {
+            printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
+            return 1;
+        }
+    }
 
-	printf( "ok\n" );
+    printf( "ok\n" );
 
-	return 0;
+    return 0;
 }
 

@@ -59,14 +59,14 @@ release: compile
 compile: clean output $(SRC_DIR) $(SRC)
 
 $(SRC_DIR):
-	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@)/*.c
+    cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@)/*.c
 
 $(SRC):
-	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@).c
+    cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@).c
 
 clean:
-	@rm -rf $(OUTPUT_DIR)
+    @rm -rf $(OUTPUT_DIR)
 
 output:
-	@mkdir -p $(OUTPUT_DIR)
+    @mkdir -p $(OUTPUT_DIR)
 

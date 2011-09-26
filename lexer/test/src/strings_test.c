@@ -6,51 +6,51 @@
 
 
 const char* input[] = {
-	"fe43q",
-	"",
-	"continue",
-	"3654",
-	"#@%%^%@!",
-	" \"'",
-	"(){}[]",
-	"\"fewf'fwe",
-	"\"\\\n\r\\\\fs324$#^@#:>?<\\\"",
-	"\"\\\r\\\\fs324$#^@#:>?<\\\"\"",
-	"\"fewfq\"",
-	"L\"fqwf\""
+    "fe43q",
+    "",
+    "continue",
+    "3654",
+    "#@%%^%@!",
+    " \"'",
+    "(){}[]",
+    "\"fewf'fwe",
+    "\"\\\n\r\\\\fs324$#^@#:>?<\\\"",
+    "\"\\\r\\\\fs324$#^@#:>?<\\\"\"",
+    "\"fewfq\"",
+    "L\"fqwf\""
 };
 
 
 int expect[] = {
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	22,
-	7,
-	7,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    22,
+    7,
+    7,
 };
 
 
 int main ( void ) {
 
-	for( int i = 0; i < (int)NUM_INPUT; i++ ) {
+    for( int i = 0; i < (int)NUM_INPUT; i++ ) {
 
-		int ret = is_string( input[i] );
+        int ret = is_string( input[i] );
 
-		if ( ret != expect[i] ) {
-			printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
-			return 1;
-		}
-	}
+        if ( ret != expect[i] ) {
+            printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
+            return 1;
+        }
+    }
 
-	printf( "ok\n" );
+    printf( "ok\n" );
 
-	return 0;
+    return 0;
 }
 

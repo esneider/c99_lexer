@@ -5,8 +5,8 @@
 
 static size_t is_identifier ( const char* token ) {
 
-	if ( strchr( digit_character, token[0] ) )
-		return 0;
+    if ( strchr( digit_character, token[0] ) )
+        return 0;
 
     size_t len = 0, aux;
 
@@ -31,6 +31,6 @@ static size_t is_identifier ( const char* token ) {
         /* and again */
     }
 
-	return len;
+    return len;
 }
 

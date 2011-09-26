@@ -6,61 +6,61 @@
 
 
 const char* input[] = {
-	"feq",
-	"ferggerwgwer",
-	"",
-	"continue",
-	"3654",
-	"#@%%^%@!",
-	" \"'",
-	"_Bool",
-	"(){}[]",
-	"_Imaginary",
-	"+++",
-	"++",
-	"+",
-	"?",
-	"##",
-	">",
-	"_"
+    "feq",
+    "ferggerwgwer",
+    "",
+    "continue",
+    "3654",
+    "#@%%^%@!",
+    " \"'",
+    "_Bool",
+    "(){}[]",
+    "_Imaginary",
+    "+++",
+    "++",
+    "+",
+    "?",
+    "##",
+    ">",
+    "_"
 };
 
 
 int expect[] = {
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_NONE,
-	PUNC_INCREMENT,
-	PUNC_PLUS,
-	PUNC_CONDITIONAL,
-	PUNC_DOUBLE_HASH,
-	PUNC_GREATER,
-	PUNC_NONE
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_NONE,
+    PUNC_INCREMENT,
+    PUNC_PLUS,
+    PUNC_CONDITIONAL,
+    PUNC_DOUBLE_HASH,
+    PUNC_GREATER,
+    PUNC_NONE
 };
 
 
 int main ( void ) {
 
-	for( int i = 0; i < (int)NUM_INPUT; i++ ) {
+    for( int i = 0; i < (int)NUM_INPUT; i++ ) {
 
-		int ret = is_punctuator( input[i] );
+        int ret = is_punctuator( input[i] );
 
-		if ( ret != expect[i] ) {
-			printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
-			return 1;
-		}
-	}
+        if ( ret != expect[i] ) {
+            printf( "fail\n\texpected: %d\n\treceived: %d\n", expect[i], ret );
+            return 1;
+        }
+    }
 
-	printf( "ok\n" );
+    printf( "ok\n" );
 
-	return 0;
+    return 0;
 }
 
