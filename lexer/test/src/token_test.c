@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "lexer.h"
-
+#include "token.h"
+#include "string_token.c"
+#include "keyword_token.c"
+#include "punctuator_token.c"
+#include "directive_token.c"
 
 int main ( int argc, char** argv ) {
 
@@ -30,21 +33,21 @@ int main ( int argc, char** argv ) {
 
 	for ( int i = 0; i < (int)list.size; i++ ) {
 
-		printf( "(%d:%d) `%.*s` -> ", list.tokens[i].line, list.tokens[i].col,
-				list.tokens[i].len, list.tokens[i].ptr );
+		printf( "(%zd:%zd) `%.*s` -> ", list.tokens[i].line, list.tokens[i].col,
+				(int)list.tokens[i].len, list.tokens[i].ptr );
 
 		switch ( list.tokens[i].type ) {
 			case TOK_NONE:
 				printf( "ERROR" );
 				break;
 			case TOK_KEYWORD:
-				printf( "KEYWORD: %s", keywords[ list.tokens[i].extra.keyword_index ] );
+				printf( "KEYWORD: %s", keywords[ list.tokens[i].info.keyword ] );
 				break;
 			case TOK_IDENTIFIER:
 				printf( "IDENTIFIER" );
 				break;
 			case TOK_CONSTANT:
-				switch ( list.tokens[i].extra.constant.type ) {
+				switch ( list.tokens[i].info.constant ) {
 					case CONST_DECIMAL:
 						printf( "DECIMAL" );
 						break;
@@ -65,29 +68,29 @@ int main ( int argc, char** argv ) {
 						break;
 					default:;
 				}
-				switch ( list.tokens[i].extra.constant.modifier ) {
-					case MOD_UNSIGNED_INT:
+				switch ( list.tokens[i].extra.constant_modifier ) {
+					case CONST_MOD_UNSIGNED_INT:
 						printf( ": u" );
 						break;
-					case MOD_SIGNED_LONG:
+					case CONST_MOD_SIGNED_LONG:
 						printf( ": l" );
 						break;
-					case MOD_UNSIGNED_LONG:
+					case CONST_MOD_UNSIGNED_LONG:
 						printf( ": ul" );
 						break;
-					case MOD_SIGNED_LONG_LONG:
+					case CONST_MOD_SIGNED_LONG_LONG:
 						printf( ": ll" );
 						break;
-					case MOD_UNSIGNED_LONG_LONG:
+					case CONST_MOD_UNSIGNED_LONG_LONG:
 						printf( ": ull" );
 						break;
-					case MOD_FLOAT:
+					case CONST_MOD_FLOAT:
 						printf( ": f" );
 						break;
-					case MOD_LONG_DOUBLE:
+					case CONST_MOD_LONG_DOUBLE:
 						printf( ": l" );
 						break;
-					case MOD_WIDE_CHARACTER:
+					case CONST_MOD_WIDE_CHARACTER:
 						printf( ": wide" );
 						break;
 					default:;
@@ -97,23 +100,26 @@ int main ( int argc, char** argv ) {
 				printf( "STRING" );
 				break;
 			case TOK_PUNCTUATOR:
-				printf( "PUNCTUATOR: %s", punctuators[ list.tokens[i].extra.punctuator_index ] );
+				printf( "PUNCTUATOR: %s", punctuators[ list.tokens[i].info.punctuator ] );
 				break;
 			case TOK_DIRECTIVE:
 				printf( "PREPROCESSOR DIRECTIVE: " );
-				enum directives dir =   list.tokens[i].extra.directive.type;
-				unsigned int    flags = list.tokens[i].extra.directive.flags;
+				enum directive_token dir  = list.tokens[i].info.directive;
+				unsigned int         flag = list.tokens[i].extra.directive_flag;
 
-				if ( dir > DIR_OUTPUT )
-					printf( "%s", directives[ dir ] );
-				else
-				if ( dir == DIR_EMPTY )
-					printf( "EMPTY" );
-				else {
-					printf( "OUTPUT: line %d, flags %d",
-							flags >> 4, flags &15 );
-				}
-				break;
+                switch ( dir ) {
+                    case DIR_OTHER:
+                        printf( "OTHER" );
+                        break;
+                    case DIR_EMPTY:
+                        printf( "EMPTY" );
+                        break;
+                    case DIR_OUTPUT:
+					    printf( "OUTPUT: line %u, flag %u", flag >> 4, flag &15 );
+                        break;
+                    default:
+					    printf( "%s", directives[ dir ] );
+                }
 		}
 
 		printf( "\n" );

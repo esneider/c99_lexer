@@ -55,10 +55,8 @@ static struct directive is_directive ( char* token ) {
 	}
 
 	size_t size = end - token + 1;
-
-	token += strspn( token, space_character ); // TODO: check if this is redundant
-
-	token += aux = strspn( token, digit_character );
+	token += strspn( token, space_character );
+	aux    = strspn( token, digit_character );
 
 	if ( aux ) {
 
@@ -69,24 +67,30 @@ static struct directive is_directive ( char* token ) {
 
 		dir.flag <<= 4;
 
-		token += strspn( token, space_character );
+        token += aux;
+		token += aux = strspn( token, space_character );
+
+        if ( !aux )
+            return (struct directive){ size, DIR_OTHER, 0 };
+
 		token += aux = is_string( token );
 
-        size_t flag = 0;
+        if ( !aux )
+            return (struct directive){ size, DIR_OTHER, 0 };
 
-        while ( sscanf( token, " %zu", &flag ) ) {
+        while ( ( aux = strspn( token, space_character ) ) ) {
 
-            if ( flag < 1 || flag > 4 )
-                break;
+            token += aux;
 
-			dir.flag |= 1 << (flag - 1);
-            flag = 0;
+            if ( token[0] < '1' || token[0] > '4' ) break;
+
+            dir.flag |= 1 << ( token++[0] - '1' );
         }
 
-        if ( flag < 1 || flag > 4 )
-	        return (struct directive){ size, DIR_OTHER, 0 };
+        if ( token[0] == 0 || token[0] == '\n' )
+            return dir;
 
-        return dir;
+        return (struct directive){ size, DIR_OTHER, 0 };
 	}
 
 	aux = strspn( token, identifier_character );

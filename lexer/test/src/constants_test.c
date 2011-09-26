@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "constants.h"
+#include "token.h"
+#include "constant_token.c"
 
 #define NUM_INPUT ( sizeof( input ) / sizeof( input[0] ) )
 
@@ -44,42 +45,42 @@ const char* input[] = {
 };
 
 
-struct return_constant expect[] = {
-	{ 0, { CONST_NONE,0 } },
-	{ 0, { CONST_NONE,0 } },
-	{ 0, { CONST_NONE,0 } },
-	{ 4, { CONST_DECIMAL,MOD_SIGNED_INT } },
-	{ 0, { CONST_NONE,0 } },
-	{ 0, { CONST_NONE,0 } },
-	{ 0, { CONST_NONE,0 } },
-	{ 3, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 4, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 4, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 0, { CONST_NONE,0 } },
-	{ 6, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 0, { CONST_NONE,0 } },
-	{ 24, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 7, { CONST_CHARACTER,MOD_CHARACTER } },
-	{ 7, { CONST_CHARACTER,MOD_WIDE_CHARACTER } },
-	{ 7, { CONST_DECIMAL,MOD_UNSIGNED_LONG_LONG } },
-	{ 5, { CONST_DECIMAL,MOD_UNSIGNED_LONG } },
-	{ 6, { CONST_OCTAL,MOD_UNSIGNED_INT } },
-	{ 2, { CONST_DECIMAL,MOD_SIGNED_LONG } },
-	{ 1, { CONST_DECIMAL,MOD_SIGNED_INT } },
-	{ 10, { CONST_HEXADECIMAL,MOD_SIGNED_LONG_LONG } },
-	{ 7, { CONST_HEXADECIMAL,MOD_SIGNED_INT } },
-	{ 6, { CONST_HEXADECIMAL,MOD_SIGNED_INT } },
-	{ 14, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 4, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 4, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 6, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 9, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 9, { CONST_DECIMAL_FLOATING,MOD_FLOAT } },
-	{ 10, { CONST_DECIMAL_FLOATING,MOD_LONG_DOUBLE } },
-	{ 0, { CONST_NONE,0 } },
-	{ 7, { CONST_DECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 16, { CONST_HEXADECIMAL_FLOATING,MOD_DOUBLE } },
-	{ 15, { CONST_HEXADECIMAL_FLOATING,MOD_DOUBLE } },
+struct constant expect[] = {
+	{ 0,  CONST_NONE,                 0 },
+	{ 0,  CONST_NONE,                 0 },
+	{ 0,  CONST_NONE,                 0 },
+	{ 4,  CONST_DECIMAL,              CONST_MOD_SIGNED_INT },
+	{ 0,  CONST_NONE,                 0 },
+	{ 0,  CONST_NONE,                 0 },
+	{ 0,  CONST_NONE,                 0 },
+	{ 3,  CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 4,  CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 4,  CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 0,  CONST_NONE,                 0 },
+	{ 6,  CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 0,  CONST_NONE,                 0 },
+	{ 24, CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 7,  CONST_CHARACTER,            CONST_MOD_CHARACTER },
+	{ 7,  CONST_CHARACTER,            CONST_MOD_WIDE_CHARACTER },
+	{ 7,  CONST_DECIMAL,              CONST_MOD_UNSIGNED_LONG_LONG },
+	{ 5,  CONST_DECIMAL,              CONST_MOD_UNSIGNED_LONG },
+	{ 6,  CONST_OCTAL,                CONST_MOD_UNSIGNED_INT },
+	{ 2,  CONST_DECIMAL,              CONST_MOD_SIGNED_LONG },
+	{ 1,  CONST_DECIMAL,              CONST_MOD_SIGNED_INT },
+	{ 10, CONST_HEXADECIMAL,          CONST_MOD_SIGNED_LONG_LONG },
+	{ 7,  CONST_HEXADECIMAL,          CONST_MOD_SIGNED_INT },
+	{ 6,  CONST_HEXADECIMAL,          CONST_MOD_SIGNED_INT },
+	{ 14, CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 4,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 4,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 6,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 9,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 9,  CONST_DECIMAL_FLOATING,     CONST_MOD_FLOAT },
+	{ 10, CONST_DECIMAL_FLOATING,     CONST_MOD_LONG_DOUBLE },
+	{ 0,  CONST_NONE,                 0 },
+	{ 7,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
+	{ 16, CONST_HEXADECIMAL_FLOATING, CONST_MOD_DOUBLE },
+	{ 15, CONST_HEXADECIMAL_FLOATING, CONST_MOD_DOUBLE },
 };
 
 
@@ -87,13 +88,13 @@ int main ( void ) {
 
 	for( int i = 0; i < (int)NUM_INPUT; i++ ) {
 
-		struct return_constant ret = is_constant( input[i] );
+		struct constant ret = is_constant( input[i] );
 
-		if ( memcmp( &ret, expect + i, sizeof( struct return_constant ) ) != 0 ) {
+		if ( memcmp( &ret, expect + i, sizeof( struct constant ) ) != 0 ) {
 
-			printf( "fail\n\texpected: %d %d %d\n\treceived: %d %d %d\n",
-					expect[i].len, expect[i].constant.type, expect[i].constant.modifier,
-					ret.len, ret.constant.type, ret.constant.modifier );
+			printf( "fail\n\texpected: %zd %d %d\n\treceived: %zd %d %d\n",
+					expect[i].len, expect[i].type, expect[i].modifier,
+					ret.len, ret.type, ret.modifier );
 			return 1;
 		}
 	}

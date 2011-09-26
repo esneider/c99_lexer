@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "strings.h"
+#include "token.h"
+#include "string_token.c"
 
 #define NUM_INPUT ( sizeof( input ) / sizeof( input[0] ) )
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "keywords.h"
+#include "token.h"
+#include "keyword_token.c"
 
 #define NUM_INPUT ( sizeof( input ) / sizeof( input[0] ) )
 
@@ -21,18 +22,18 @@ const char* input[] = {
 
 
 int expect[] = {
-	KW_NONE,
-	KW_NONE,
-	KW_NONE,
-	KW_CONTINUE,
-	KW_NONE,
-	KW_NONE,
-	KW_NONE,
-	KW_AUTO,
-	KW__BOOL,
-	KW_INT,
-	KW_NONE,
-	KW__IMAGINARY
+	KWD_NONE,
+	KWD_NONE,
+	KWD_NONE,
+	KWD_CONTINUE,
+	KWD_NONE,
+	KWD_NONE,
+	KWD_NONE,
+	KWD_AUTO,
+	KWD__BOOL,
+	KWD_INT,
+	KWD_NONE,
+	KWD__IMAGINARY
 };
 
 

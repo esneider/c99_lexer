@@ -13,11 +13,11 @@ PREPROCESSOR  =
 
 LIBRARIES     =
 
-SOURCES       = src/keywords_test.c \
+SOURCES       = src/constants_test.c \
+                src/keywords_test.c \
                 src/identifiers_test.c \
                 src/punctuators_test.c \
                 src/strings_test.c \
-                src/constants_test.c \
                 src/directives_test.c
 
 INCLUDE_DIRS  = ../src

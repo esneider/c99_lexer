@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "punctuators.h"
+#include "token.h"
+#include "punctuator_token.c"
 
 #define NUM_INPUT ( sizeof( input ) / sizeof( input[0] ) )
 
@@ -26,23 +27,23 @@ const char* input[] = {
 
 
 int expect[] = {
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_NONE,
-	PNT_INCREMENT,
-	PNT_PLUS,
-	PNT_CONDITIONAL,
-	PNT_DOUBLE_HASH,
-	PNT_GREATER,
-	PNT_NONE
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_NONE,
+	PUNC_INCREMENT,
+	PUNC_PLUS,
+	PUNC_CONDITIONAL,
+	PUNC_DOUBLE_HASH,
+	PUNC_GREATER,
+	PUNC_NONE
 };
 
 

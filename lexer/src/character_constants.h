@@ -28,7 +28,7 @@ static const char* const space_character =
 	" \t\r\v\f";
 
 static const char* const delimiter_character =
-	" \t\n\r\v\f\0";
+	" \t\n\r\v\f";
 
 
 #endif /* _CHARACTER_CONSTANTS_H_ */
