@@ -68,6 +68,6 @@ output:
 $(addsuffix _run,$(OBJS)):
 	@echo -n "$(@F:.o_run=) ... "
 	@./$(OUTPUT_DIR)$(@F:.o_run=)
-#	@valgrind ./$(OUTPUT_DIR)$(@F:.o_run=)
+	@valgrind ./$(OUTPUT_DIR)$(@F:.o_run=)
 
 run: $(addsuffix _run,$(OBJS))
