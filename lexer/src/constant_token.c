@@ -151,12 +151,14 @@ static struct constant is_constant ( const char* token ) {
         if ( empty && ( hex || !zero ) )
             return (struct constant){ 0, CONST_NONE, 0 };
 
+        get_integer_modifier( token, &ret );
+
         if ( hex )
             ret.type = CONST_HEXADECIMAL;
         else
             ret.type = zero && !empty ? CONST_OCTAL : CONST_DECIMAL;
 
-        get_integer_modifier( token, &ret );
+        /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
 
         return ret;
     }
