@@ -45,7 +45,16 @@ static size_t is_char_constant ( const char* token ) {
 }
 
 
-static void get_integer_modifier ( const char* token, struct constant* ret ) {
+enum modifier_flags {
+
+    MOD_FLAG_INT       = 0,
+    MOD_FLAG_UNSIGNED  = 1,
+    MOD_FLAG_LONG      = 2,
+    MOD_FLAG_LONG_LONG = 6
+};
+
+
+static int get_integer_modifier ( const char* token, struct constant* ret ) {
 
     char aux[3];
 
@@ -58,21 +67,24 @@ static void get_integer_modifier ( const char* token, struct constant* ret ) {
     {
         ret->len += 3;
         ret->modifier = CONST_MOD_UNSIGNED_LONG_LONG;
-        return;
+
+        return MOD_FLAG_UNSIGNED | MOD_FLAG_LONG_LONG;
     }
 
     if ( strncmp( aux, "UL", 2 ) == 0 || strncmp( aux, "LU", 2 ) == 0 ) {
 
         ret->len += 2;
         ret->modifier = CONST_MOD_UNSIGNED_LONG;
-        return;
+
+        return MOD_FLAG_UNSIGNED | MOD_FLAG_LONG;
     }
 
     if ( aux[0] == 'U' ) {
 
         ret->len ++;
         ret->modifier = CONST_MOD_UNSIGNED_INT;
-        return;
+
+        return MOD_FLAG_UNSIGNED;
     }
 
     if ( aux[0] == 'L' ) {
@@ -81,15 +93,19 @@ static void get_integer_modifier ( const char* token, struct constant* ret ) {
 
             ret->len += 2;
             ret->modifier = CONST_MOD_SIGNED_LONG_LONG;
-            return;
+
+            return MOD_FLAG_LONG_LONG;
         }
 
         ret->len ++;
         ret->modifier = CONST_MOD_SIGNED_LONG;
-        return;
+
+        return MOD_FLAG_LONG;
     }
 
     ret->modifier = CONST_MOD_SIGNED_INT;
+
+    return MOD_FLAG_INT;
 }
 
 
@@ -151,12 +167,19 @@ static struct constant is_constant ( const char* token ) {
         if ( empty && ( hex || !zero ) )
             return (struct constant){ 0, CONST_NONE, 0 };
 
-        get_integer_modifier( token, &ret );
-
         if ( hex )
             ret.type = CONST_HEXADECIMAL;
         else
             ret.type = zero && !empty ? CONST_OCTAL : CONST_DECIMAL;
+
+        int modifier_flag = get_integer_modifier( token, &ret );
+
+        /* 0xFFFFFFF < MAX_INT                                   */
+        /* 077777777 < MAX_INT  so if len < 10 => fits in an int */
+        /* 999999999 < MAX_INT                                   */
+
+        if ( aux < 10 )
+            return ret;
 
         /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
 
