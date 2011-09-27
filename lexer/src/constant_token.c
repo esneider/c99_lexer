@@ -102,7 +102,7 @@ static struct constant is_constant ( const char* token ) {
     if ( ret.len ) {
 
         ret.type = CONST_CHARACTER;
-        ret.modifier = CONST_MOD_CHARACTER;
+        ret.modifier = CONST_MOD_SIGNED_INT;
 
         if ( ret.len & WIDE_CHAR_FLAG ) {
 
