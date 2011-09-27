@@ -3,7 +3,7 @@
 
 
 #include <stdlib.h>
-#include "tokens.h"
+#include "token.h"
 
 
 struct expression;
@@ -50,8 +50,8 @@ struct cast_expression {
 struct member_access_expression {
 
 	struct expression object;
-	struct punctuator punctuator;
-	struct identifier member;
+	struct token      punctuator;
+	struct token      identifier;
 };
 
 
@@ -60,7 +60,7 @@ struct member_access_expression {
 struct post_op_expression {
 
 	struct expression object;
-	struct punctuator punctuator;
+	struct token      punctuator;
 };
 
 
@@ -68,7 +68,7 @@ struct post_op_expression {
 /* -- expression */
 struct pre_op_expression {
 
-	struct punctuator punctuator;
+	struct token      punctuator;
 	struct expression object;
 };
 
@@ -81,7 +81,7 @@ struct pre_op_expression {
 /* ! expression  */
 struct unary_op_expression {
 
-	struct punctuator punctuator;
+	struct token      punctuator;
 	struct expression object;
 };
 
@@ -107,7 +107,7 @@ struct unary_op_expression {
 struct binary_op_expression {
 
 	struct expression left_operand;
-	struct punctuator punctuator;
+	struct token      punctuator;
 	struct expression right_operand;
 };
 
@@ -131,7 +131,7 @@ struct conditional_expression {
 
 	struct expression condition;
 	struct expression success;
-	struct expression fail;
+	struct expression failure;
 };
 
 
@@ -149,7 +149,7 @@ struct conditional_expression {
 struct assignment_expression {
 
 	struct expression lvalue;
-	struct punctuator punctuator;
+	struct token      punctuator;
 	struct expression rvalue;
 };
 
@@ -167,6 +167,7 @@ enum expressions {
 	IDENTIFIER_EXPRESSION,
 	CONSTANT_EXPRESSION,
 	STRING_EXPRESSION,
+    PARENTHESES_EXPRESSION,
 
 	INDEX_EXPRESSION,
 	FUNCTION_EXPRESSION,
@@ -195,9 +196,10 @@ struct expression {
 	enum expressions type;
 
 	union {
-		struct identifier*  identifier;
-		struct constant*    constant;
-		struct string*      string;
+		struct token*      identifier;
+		struct token*      constant;
+		struct token*      string;
+        struct expression* parentheses_expression;
 
 		struct array_expression*            array_expression;
 		struct function_expresion*          function_expresion;
