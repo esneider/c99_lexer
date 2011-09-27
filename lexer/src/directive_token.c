@@ -40,9 +40,20 @@ struct directive {
 
 static struct directive is_directive ( char* token ) {
 
-    size_t aux;
+    size_t aux, size;
 
-    if ( token++[0] != '#' )
+    if ( token[0] == '#' ) {
+
+        token++;
+        size = 1;
+
+    } else
+    if ( token[0] == '%' && token[1] == ':' ) {
+
+        token += 2;
+        size   = 2;
+
+    } else
         return (struct directive){ 0, DIR_NONE, 0 };
 
     char* end = token;
@@ -54,7 +65,7 @@ static struct directive is_directive ( char* token ) {
         end += strcspn( end, delimiter_character );
     }
 
-    size_t size = end - token + 1;
+    size  += end - token;
     token += strspn( token, space_character );
     aux    = strspn( token, digit_character );
 
