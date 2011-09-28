@@ -185,7 +185,7 @@ static struct constant is_constant ( const char* token ) {
         /* 07777777777777777 < MAX_LONG_LONG  so if len < 18 fint in a long long */
         /* 99999999999999999 < MAX_LONG_LONG                                     */
 
-        if ( aux < 18 && modifier_flag & MOD_FLAG_LONG_LONG == MOD_FLAG_LONG )
+        if ( modifier_flag & MOD_FLAG_LONG_LONG == MOD_FLAG_LONG && aux < 18 )
             return ret;
 
         /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
