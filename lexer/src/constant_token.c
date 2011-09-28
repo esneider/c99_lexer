@@ -190,7 +190,7 @@ static struct constant is_constant ( const char* token ) {
 
         /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
 
-        unsigned long long num
+/*        unsigned long long num; */
 
         return ret;
     }
