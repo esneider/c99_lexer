@@ -2,7 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "character_constants.h"
+#include "constants.h"
 
 
 struct constant {
@@ -131,6 +131,8 @@ static struct constant is_constant ( const char* token ) {
 
     /* not character */
 
+    const char* back = token;
+
     bool zero, hex, point, exponent, empty;
     size_t aux;
 
@@ -174,23 +176,44 @@ static struct constant is_constant ( const char* token ) {
 
         int modifier_flag = get_integer_modifier( token, &ret );
 
-        /* 0xFFFFFFF < MAX_INT                                   */
-        /* 077777777 < MAX_INT  so if len < 10 => fits in an int */
-        /* 999999999 < MAX_INT                                   */
+        /* 0xFFFFFFF < MAX_INT                                  */
+        /* 077777777 < MAX_INT so if len < 10 => fits in an int */
+        /* 999999999 < MAX_INT                                  */
 
         if ( aux < 10 )
             return ret;
 
-        /* 0xFFFFFFFFFFFFFFF < MAX_LONG_LONG                                     */
-        /* 07777777777777777 < MAX_LONG_LONG  so if len < 18 fint in a long long */
-        /* 99999999999999999 < MAX_LONG_LONG                                     */
+        /* 0xFFFFFFFFFFFFFFF < MAX_LONG_LONG                                    */
+        /* 07777777777777777 < MAX_LONG_LONG so if len < 18 fits in a long long */
+        /* 99999999999999999 < MAX_LONG_LONG                                    */
 
         if ( modifier_flag & MOD_FLAG_LONG_LONG == MOD_FLAG_LONG && aux < 18 )
             return ret;
 
         /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
 
-/*        unsigned long long num; */
+        unsigned long long num;
+        sscanf( back , "%llu", &num );
+
+        const int * const types;
+
+        if ( hex || zero )
+            types = int_const_types[ modifier_flag ];
+        else
+            types = int_const_types[ DEC_CONST | modifier_flag ];
+
+        for( ; *types != -1; types++ ) {
+
+            if ( num <= int_limits[ *types ] ) {
+
+                ret->modifier = *types;
+                break;
+            }
+        }
+
+        if ( num == ULLONG_MAX ) {
+            // TODO: check that it isn't larger than ULLONG_MAX
+        }
 
         return ret;
     }

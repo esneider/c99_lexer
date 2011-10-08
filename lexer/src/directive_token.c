@@ -1,33 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "character_constants.h"
+#include "constants.h"
 #include "utils.h"
-
-
-static const char const directives[][8] = {
-
-    "",
-    "",
-    "",
-    "",
-    "define",
-    "elif",
-    "else",
-    "endif",
-    "error",
-    "if",
-    "ifdef",
-    "ifndef",
-    "include",
-    "line",
-    "pragma",
-    "undef"
-};
-
-
-#define NUM_DIRECTIVES     ( sizeof( directives ) / sizeof( directives[0] ) )
-#define MAX_LEN_DIRECTIVES sizeof( directives[0] )
 
 
 struct directive {

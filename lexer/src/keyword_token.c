@@ -1,54 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
-#include "character_constants.h"
+#include "constants.h"
 #include "utils.h"
-
-
-static const char keywords[][11] = {
-
-    "",
-    "_Bool",
-    "_Complex",
-    "_Imaginary",
-    "auto",
-    "break",
-    "case",
-    "char",
-    "const",
-    "continue",
-    "default",
-    "do",
-    "double",
-    "else",
-    "enum",
-    "extern",
-    "float",
-    "for",
-    "goto",
-    "if",
-    "inline",
-    "int",
-    "long",
-    "register",
-    "restrict",
-    "return",
-    "short",
-    "signed",
-    "sizeof",
-    "static",
-    "struct",
-    "switch",
-    "typedef",
-    "union",
-    "unsigned",
-    "void",
-    "volatile",
-    "while",
-};
-
-
-#define NUM_KEYWORDS     ( sizeof( keywords ) / sizeof( keywords[0] ) )
-#define MAX_LEN_KEYWORDS sizeof( keywords[0] )
 
 
 static enum keyword_token is_keyword ( const char* token ) {
