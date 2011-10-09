@@ -25,7 +25,7 @@ int main ( int argc, char** argv ) {
     char* buffer = calloc( file_size + 10, 1 );
     assert( buffer );
 
-    assert( fread( buffer, 1, file_size, file ) == file_size );
+    assert( fread( buffer, 1, file_size, file ) == (size_t)file_size );
 
     fclose( file );
 
