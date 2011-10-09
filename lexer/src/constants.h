@@ -54,7 +54,6 @@ static const char const directives[][8] = {
     "undef"
 };
 
-
 #define NUM_KEYWORDS   ( sizeof( keywords ) / sizeof( keywords[0] ) )
 #define MAX_LEN_KEYWORDS sizeof( keywords[0] )
 static const char keywords[][11] = {
@@ -98,7 +97,6 @@ static const char keywords[][11] = {
     "volatile",
     "while",
 };
-
 
 #define NUM_PUNCTUATORS   ( sizeof( punctuators ) / sizeof( punctuators[0] ) )
 #define MAX_LEN_PUNCTUATORS sizeof( punctuators[0] )
@@ -161,7 +159,6 @@ static const char punctuators[][5] = {
     "~"
 };
 
-
 static const unsigned long long int_limits[] = {
 
     [ CONST_MOD_SIGNED_INT ]         = INT_MAX,
@@ -172,7 +169,6 @@ static const unsigned long long int_limits[] = {
     [ CONST_MOD_UNSIGNED_LONG_LONG ] = ULLONG_MAX
 };
 
-
 static const int signed_dec_const_types[] = {
 
     CONST_MOD_SIGNED_INT,
@@ -181,7 +177,6 @@ static const int signed_dec_const_types[] = {
     -1
 };
 
-
 static const int unsigned_const_types[] = {
 
     CONST_MOD_UNSIGNED_INT,
@@ -189,7 +184,6 @@ static const int unsigned_const_types[] = {
     CONST_MOD_UNSIGNED_LONG_LONG,
     -1
 };
-
 
 static const int signed_hex_const_types[] = {
 
@@ -202,9 +196,7 @@ static const int signed_hex_const_types[] = {
     -1
 };
 
-
 #define DEC_CONST ( 1 << 4 )
-
 static const int * const int_const_types[] = {
 
     [ DEC_CONST | CONST_MOD_SIGNED_INT ]         = signed_dec_const_types,
