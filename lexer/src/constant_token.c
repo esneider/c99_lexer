@@ -268,11 +268,6 @@ static struct constant is_constant ( const char* token ) {
         if ( *types == -1 )
             return (struct constant){ 0, CONST_NONE, 0 };
 
-        if ( num == ULLONG_MAX ) {
-
-            // TODO: check that it isn't larger than ULLONG_MAX
-        }
-
         return ret;
     }
 
