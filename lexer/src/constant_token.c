@@ -176,37 +176,38 @@ static struct constant is_constant ( const char* token ) {
 
         int modifier_flag = get_integer_modifier( token, &ret );
 
-        /* 0xFFFFFFF < MAX_INT                                  */
-        /* 077777777 < MAX_INT so if len < 10 => fits in an int */
-        /* 999999999 < MAX_INT                                  */
+        /* 0xFFFFFFF < INT_MAX                                  */
+        /* 077777777 < INT_MAX so if len < 10 => fits in an int */
+        /* 999999999 < INT_MAX                                  */
 
         if ( aux < 10 )
             return ret;
 
-        /* 0xFFFFFFFFFFFFFFF < MAX_LONG_LONG                                    */
-        /* 07777777777777777 < MAX_LONG_LONG so if len < 18 fits in a long long */
-        /* 99999999999999999 < MAX_LONG_LONG                                    */
+        /* 0xFFFFFFFFFFFFFFF < LLONG_MAX                                    */
+        /* 07777777777777777 < LLONG_MAX so if len < 18 fits in a long long */
+        /* 99999999999999999 < LLONG_MAX                                    */
 
-        if ( modifier_flag & MOD_FLAG_LONG_LONG == MOD_FLAG_LONG && aux < 18 )
+        if ( aux < 18 && ( MOD_FLAG_LONG_LONG & modifier_flag ) ==
+                           MOD_FLAG_LONG_LONG )
+        {
             return ret;
+        }
 
         /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
 
         unsigned long long num;
         sscanf( back , "%llu", &num );
 
-        const int * const types;
+        const int * types;
 
-        if ( hex || zero )
-            types = int_const_types[ modifier_flag ];
-        else
-            types = int_const_types[ DEC_CONST | modifier_flag ];
+        if ( !hex && !zero )
+            modifier_flag |= DEC_CONST;
 
-        for( ; *types != -1; types++ ) {
+        for( types = int_const_types[ modifier_flag ]; *types != -1; types++ ) {
 
             if ( num <= int_limits[ *types ] ) {
 
-                ret->modifier = *types;
+                ret.modifier = *types;
                 break;
             }
         }
