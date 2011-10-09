@@ -176,6 +176,9 @@ static struct constant is_constant ( const char* token ) {
 
         int modifier_flag = get_integer_modifier( token, &ret );
 
+        if ( strchr( identifier_character, back[ ret.len ] ) )
+            return (struct constant){ 0, CONST_NONE, 0 };
+
         /* 0xFFFFFFF < INT_MAX                                  */
         /* 077777777 < INT_MAX so if len < 10 => fits in an int */
         /* 999999999 < INT_MAX                                  */
@@ -193,10 +196,60 @@ static struct constant is_constant ( const char* token ) {
             return ret;
         }
 
-        /* TODO: 6.4.4.1.5 Language - Lexical elements - Constants - Integer Constants - Type */
+        /*
+         * 6.4.4.1.5
+         * Language - Lexical elements - Constants - Integer Constants - Type
+         */
 
+        /* read & check overflow */
         unsigned long long num;
-        sscanf( back , "%llu", &num );
+
+        #define check_equal_number( str, num, len ) \
+                ( !( str[len] && strchr( identifier_character, str[len] ) ) && \
+                   strncmp( str, num, len ) == 0 )
+
+        switch ( zero + hex ) {
+
+            case 0:
+                sscanf( back, "%llu", &num );
+
+                if ( num == ULLONG_MAX &&
+                     !check_equal_number( back, "18446744073709551615", 20 ) )
+                {
+                    return (struct constant){ 0, CONST_NONE, 0 };
+                }
+                break;
+
+            case 1:
+                sscanf( back, "%llo", &num );
+
+                if ( num == ULLONG_MAX &&
+                    !check_equal_number( back, "01777777777777777777777", 23 ) )
+                {
+                    return (struct constant){ 0, CONST_NONE, 0 };
+                }
+                break;
+
+            case 2:
+                sscanf( back, "%llx", &num );
+
+                /* 0xFFFFFFFFFFFFFFFF */
+                if ( num == ULLONG_MAX ) {
+
+                    if ( back[18] && strchr( identifier_character, back[18] ) )
+
+                        return (struct constant){ 0, CONST_NONE, 0 };
+
+                    for ( int i = 2; i < 18; i++ )
+
+                        if ( !strchr( "fF", back[i] ) )
+
+                            return (struct constant){ 0, CONST_NONE, 0 };
+                }
+                break;
+        }
+
+        #undef check_equal_number
 
         const int * types;
 
@@ -212,11 +265,11 @@ static struct constant is_constant ( const char* token ) {
             }
         }
 
-        if ( *types == -1 ) {
-            // TODO
-        }
+        if ( *types == -1 )
+            return (struct constant){ 0, CONST_NONE, 0 };
 
         if ( num == ULLONG_MAX ) {
+
             // TODO: check that it isn't larger than ULLONG_MAX
         }
 
