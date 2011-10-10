@@ -45,16 +45,7 @@ static size_t is_char_constant ( const char* token ) {
 }
 
 
-enum modifier_flags {
-
-    MOD_FLAG_INT       = 0,
-    MOD_FLAG_UNSIGNED  = 1,
-    MOD_FLAG_LONG      = 2,
-    MOD_FLAG_LONG_LONG = 6
-};
-
-
-static int get_integer_modifier ( const char* token, struct constant* ret ) {
+static void get_integer_modifier ( const char* token, struct constant* ret ) {
 
     char aux[3];
 
@@ -67,24 +58,21 @@ static int get_integer_modifier ( const char* token, struct constant* ret ) {
     {
         ret->len += 3;
         ret->modifier = CONST_MOD_UNSIGNED_LONG_LONG;
-
-        return MOD_FLAG_UNSIGNED | MOD_FLAG_LONG_LONG;
+        return;
     }
 
     if ( strncmp( aux, "UL", 2 ) == 0 || strncmp( aux, "LU", 2 ) == 0 ) {
 
         ret->len += 2;
         ret->modifier = CONST_MOD_UNSIGNED_LONG;
-
-        return MOD_FLAG_UNSIGNED | MOD_FLAG_LONG;
+        return;
     }
 
     if ( aux[0] == 'U' ) {
 
-        ret->len ++;
+        ret->len++;
         ret->modifier = CONST_MOD_UNSIGNED_INT;
-
-        return MOD_FLAG_UNSIGNED;
+        return;
     }
 
     if ( aux[0] == 'L' ) {
@@ -93,19 +81,174 @@ static int get_integer_modifier ( const char* token, struct constant* ret ) {
 
             ret->len += 2;
             ret->modifier = CONST_MOD_SIGNED_LONG_LONG;
-
-            return MOD_FLAG_LONG_LONG;
+            return;
         }
 
-        ret->len ++;
+        ret->len++;
         ret->modifier = CONST_MOD_SIGNED_LONG;
-
-        return MOD_FLAG_LONG;
+        return;
     }
 
     ret->modifier = CONST_MOD_SIGNED_INT;
+}
 
-    return MOD_FLAG_INT;
+
+static bool read_overflows ( const char* str, int flag,
+                             unsigned long long* num )
+{
+
+    #define includes( s, c ) ( str[c] && strchr( (s), str[c] ) )
+
+    switch ( flag ) {
+
+        case 0: /* decimal */
+
+            sscanf( str, "%llu", num );
+
+            return *num == TARGET_ULLONG_MAX &&
+                   ( includes( dec_digit_character, DEC_ULLONG_MAX_LEN ) ||
+                     strncmp( str, dec_ullong_max, DEC_ULLONG_MAX_LEN ) != 0 );
+
+
+        case 1: /* octal */
+
+            sscanf( str, "%llo", num );
+
+            return *num == TARGET_ULLONG_MAX &&
+                   ( includes( oct_digit_character, OCT_ULLONG_MAX_LEN ) ||
+                     strncmp( str, oct_ullong_max, OCT_ULLONG_MAX_LEN ) != 0 );
+
+        case 2: /* hexadecimal */
+
+            sscanf( str, "%llx", num );
+
+            /* 0xFFFFFFFFFFFFFFFF */
+            if ( *num == TARGET_ULLONG_MAX ) {
+
+                if ( includes( hex_digit_character, HEX_ULLONG_MAX_LEN ) )
+
+                    return true;
+
+                for ( int i = 2; i < 18; i++ )
+
+                    if ( toupper( str[i] ) != hex_ullong_max[i] )
+
+                        return true;
+            }
+            return false;
+    }
+
+    /* Should never reach this */
+    return false;
+}
+
+
+static struct constant check_integer_type ( const char* str, int flag,
+                                           struct constant ret )
+{
+    unsigned long long num;
+
+    if ( read_overflows( str, flag, &num ) )
+
+        return (struct constant){ 0, CONST_NONE, 0 };
+
+    /* promote to sufficiently large type */
+    const int * types;
+
+    if ( !flag )
+        ret.modifier |= DEC_CONST;
+
+    for( types = int_const_types[ ret.modifier ]; *types != -1; types++ ) {
+
+        if ( num <= int_limits[ *types ] ) {
+
+            ret.modifier = *types;
+            break;
+        }
+    }
+
+    if ( *types == -1 )
+        return (struct constant){ 0, CONST_NONE, 0 };
+
+    return ret;
+}
+
+
+static struct constant get_float( const char* token, bool empty, bool hex,
+                                  struct constant ret )
+{
+    bool point, exponent;
+    size_t aux;
+
+    point = exponent = false;
+
+    /* fractional part */
+
+    if ( token[0] == '.' ) {
+
+        point = true;
+        ret.len++;
+        token++;
+
+        if ( hex )
+            aux = strspn( token, hex_digit_character );
+        else
+            aux = strspn( token, dec_digit_character );
+
+        ret.len += aux;
+        token += aux;
+
+        if ( empty && !aux )
+            return (struct constant){ 0, CONST_NONE, 0 };
+    }
+
+    /* exponent part */
+
+    if ( strchr( hex ? "pP" : "eE", token[0] ) && token[0] ) {
+
+        exponent = true;
+        ret.len++;
+        token++;
+
+        if ( token[0] == '+' || token[0] == '-' ) {
+            token++;
+            ret.len++;
+        }
+
+        aux = strspn( token, dec_digit_character );
+
+        ret.len += aux;
+        token += aux;
+
+        if ( !aux )
+            return (struct constant){ 0, CONST_NONE, 0 };
+    }
+
+    if ( !exponent && ( hex || !point ) )
+        return (struct constant){ 0, CONST_NONE, 0 };
+
+    /* modifier */
+
+    ret.modifier = CONST_MOD_DOUBLE;
+
+    if ( toupper( token[0] ) == 'F' ) {
+
+        ret.modifier = CONST_MOD_FLOAT;
+        ret.len++;
+        token++;
+    } else
+    if ( toupper( token[0] ) == 'L' ) {
+
+        ret.modifier = CONST_MOD_LONG_DOUBLE;
+        ret.len++;
+        token++;
+    }
+
+    if ( strchr( identifier_character, *token ) )
+
+        return (struct constant){ 0, CONST_NONE, 0 };
+
+    return ret;
 }
 
 
@@ -131,12 +274,12 @@ static struct constant is_constant ( const char* token ) {
 
     /* not character */
 
-    const char* back = token;
+    const char* original_token = token;
 
-    bool zero, hex, point, exponent, empty;
+    bool empty, zero, hex;
     size_t aux;
 
-    zero = hex = point = exponent = empty = false;
+    empty = zero = hex = false;
 
     if ( token[0] == '0' ) {
 
@@ -150,12 +293,12 @@ static struct constant is_constant ( const char* token ) {
             token++;
             ret.len++;
 
-            aux = strspn( token, hexadecimal_digit_character );
+            aux = strspn( token, hex_digit_character );
         } else {
-            aux = strspn( token, octal_digit_character );
+            aux = strspn( token, oct_digit_character );
         }
     } else {
-        aux = strspn( token, digit_character );
+        aux = strspn( token, dec_digit_character );
     }
 
     ret.len += aux;
@@ -174,9 +317,10 @@ static struct constant is_constant ( const char* token ) {
         else
             ret.type = zero && !empty ? CONST_OCTAL : CONST_DECIMAL;
 
-        int modifier_flag = get_integer_modifier( token, &ret );
+        get_integer_modifier( token, &ret );
 
-        if ( strchr( identifier_character, back[ ret.len ] ) )
+        if ( strchr( identifier_character, original_token[ ret.len ] ) )
+
             return (struct constant){ 0, CONST_NONE, 0 };
 
         /* 0xFFFFFFF < INT_MAX                                  */
@@ -186,89 +330,11 @@ static struct constant is_constant ( const char* token ) {
         if ( aux < 10 )
             return ret;
 
-        /* 0xFFFFFFFFFFFFFFF < LLONG_MAX                                    */
-        /* 07777777777777777 < LLONG_MAX so if len < 18 fits in a long long */
-        /* 99999999999999999 < LLONG_MAX                                    */
-
-        if ( aux < 18 && ( MOD_FLAG_LONG_LONG & modifier_flag ) ==
-                           MOD_FLAG_LONG_LONG )
-        {
-            return ret;
-        }
-
         /*
          * 6.4.4.1.5
          * Language - Lexical elements - Constants - Integer Constants - Type
          */
-
-        /* read & check overflow */
-        unsigned long long num;
-
-        #define check_equal_number( str, num, len ) \
-                ( !( str[len] && strchr( identifier_character, str[len] ) ) && \
-                   strncmp( str, num, len ) == 0 )
-
-        switch ( zero + hex ) {
-
-            case 0:
-                sscanf( back, "%llu", &num );
-
-                if ( num == ULLONG_MAX &&
-                     !check_equal_number( back, "18446744073709551615", 20 ) )
-                {
-                    return (struct constant){ 0, CONST_NONE, 0 };
-                }
-                break;
-
-            case 1:
-                sscanf( back, "%llo", &num );
-
-                if ( num == ULLONG_MAX &&
-                    !check_equal_number( back, "01777777777777777777777", 23 ) )
-                {
-                    return (struct constant){ 0, CONST_NONE, 0 };
-                }
-                break;
-
-            case 2:
-                sscanf( back, "%llx", &num );
-
-                /* 0xFFFFFFFFFFFFFFFF */
-                if ( num == ULLONG_MAX ) {
-
-                    if ( back[18] && strchr( identifier_character, back[18] ) )
-
-                        return (struct constant){ 0, CONST_NONE, 0 };
-
-                    for ( int i = 2; i < 18; i++ )
-
-                        if ( !strchr( "fF", back[i] ) )
-
-                            return (struct constant){ 0, CONST_NONE, 0 };
-                }
-                break;
-        }
-
-        #undef check_equal_number
-
-        const int * types;
-
-        if ( !hex && !zero )
-            modifier_flag |= DEC_CONST;
-
-        for( types = int_const_types[ modifier_flag ]; *types != -1; types++ ) {
-
-            if ( num <= int_limits[ *types ] ) {
-
-                ret.modifier = *types;
-                break;
-            }
-        }
-
-        if ( *types == -1 )
-            return (struct constant){ 0, CONST_NONE, 0 };
-
-        return ret;
+        return check_integer_type( original_token, zero + hex, ret );
     }
 
     /* floating */
@@ -279,69 +345,10 @@ static struct constant is_constant ( const char* token ) {
         ret.type = CONST_DECIMAL_FLOATING;
 
     if ( zero && !hex ) {
-        ret.len += aux = strspn( token, digit_character );
+        ret.len += aux = strspn( token, dec_digit_character );
         token += aux;
     }
 
-    /* fractional part */
-    if ( token[0] == '.' ) {
-
-        point = true;
-        ret.len++;
-        token++;
-
-        if ( hex )
-            aux = strspn( token, hexadecimal_digit_character );
-        else
-            aux = strspn( token, digit_character );
-
-        ret.len += aux;
-        token += aux;
-
-        if ( empty && !aux )
-            return (struct constant){ 0, CONST_NONE, 0 };
-    }
-
-    /* exponent part */
-    if ( strchr( hex ? "pP" : "eE", token[0] ) && token[0] ) {
-
-        exponent = true;
-        ret.len++;
-        token++;
-
-        if ( token[0] == '+' || token[0] == '-' ) {
-            token++;
-            ret.len++;
-        }
-
-        aux = strspn( token, digit_character );
-
-        ret.len += aux;
-        token += aux;
-
-        if ( !aux )
-            return (struct constant){ 0, CONST_NONE, 0 };
-    }
-
-    if ( !exponent && ( hex || !point ) )
-        return (struct constant){ 0, CONST_NONE, 0 };
-
-    /* modifier */
-    ret.modifier = CONST_MOD_DOUBLE;
-
-    if ( toupper( token[0] ) == 'F' ) {
-
-        ret.modifier = CONST_MOD_FLOAT;
-        ret.len++;
-        token++;
-    } else
-    if ( toupper( token[0] ) == 'L' ) {
-
-        ret.modifier = CONST_MOD_LONG_DOUBLE;
-        ret.len++;
-        token++;
-    }
-
-    return ret;
+    return get_float( token, empty, hex, ret );
 }
 

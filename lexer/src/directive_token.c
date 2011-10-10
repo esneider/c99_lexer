@@ -42,7 +42,7 @@ static struct directive is_directive ( char* token ) {
 
     size  += end - token;
     token += strspn( token, space_character );
-    aux    = strspn( token, digit_character );
+    aux    = strspn( token, dec_digit_character );
 
     if ( aux ) {
 

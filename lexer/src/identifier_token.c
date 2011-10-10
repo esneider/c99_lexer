@@ -6,7 +6,7 @@
 
 static size_t is_identifier ( const char* token ) {
 
-    if ( strchr( digit_character, token[0] ) )
+    if ( strchr( dec_digit_character, token[0] ) )
         return 0;
 
     size_t len = 0, aux;
@@ -21,7 +21,7 @@ static size_t is_identifier ( const char* token ) {
         if ( token[0] != '\\' || toupper( token[1] ) != 'U' )
             break;
 
-        aux = strspn( token + 2, hexadecimal_digit_character );
+        aux = strspn( token + 2, hex_digit_character );
 
         if ( aux < ( 4 << ( token[1] == 'U' ) ) )
             return 0;

@@ -9,7 +9,7 @@ static const char* const non_digit_character =
     "abcdefghijklmnopqrstuvwxyz"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-static const char* const digit_character =
+static const char* const dec_digit_character =
     "0123456789";
 
 static const char* const identifier_character =
@@ -18,10 +18,10 @@ static const char* const identifier_character =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "0123456789";
 
-static const char* const octal_digit_character =
+static const char* const oct_digit_character =
     "01234567";
 
-static const char* const hexadecimal_digit_character =
+static const char* const hex_digit_character =
     "0123456789"
     "abcdef"
     "ABCDEF";
@@ -159,14 +159,33 @@ static const char punctuators[][5] = {
     "~"
 };
 
+#define TARGET_INT_MAX    INT_MAX
+#define TARGET_UINT_MAX   UINT_MAX
+#define TARGET_LONG_MAX   LONG_MAX
+#define TARGET_ULONG_MAX  ULONG_MAX
+#define TARGET_LLONG_MAX  LLONG_MAX
+#define TARGET_ULLONG_MAX ULLONG_MAX
+
+#define DEC_ULLONG_MAX_LEN ( sizeof( dec_ullong_max ) - 1 )
+static const char dec_ullong_max[] =
+    "18446744073709551615";
+
+#define OCT_ULLONG_MAX_LEN ( sizeof( oct_ullong_max ) - 1 )
+static const char oct_ullong_max[] =
+    "01777777777777777777777";
+
+#define HEX_ULLONG_MAX_LEN ( sizeof( hex_ullong_max ) - 1 )
+static const char hex_ullong_max[] =
+    "0xFFFFFFFFFFFFFFFF";
+
 static const unsigned long long int_limits[] = {
 
-    [ CONST_MOD_SIGNED_INT ]         = INT_MAX,
-    [ CONST_MOD_UNSIGNED_INT ]       = UINT_MAX,
-    [ CONST_MOD_SIGNED_LONG ]        = LONG_MAX,
-    [ CONST_MOD_UNSIGNED_LONG ]      = ULONG_MAX,
-    [ CONST_MOD_SIGNED_LONG_LONG ]   = LLONG_MAX,
-    [ CONST_MOD_UNSIGNED_LONG_LONG ] = ULLONG_MAX
+    [ CONST_MOD_SIGNED_INT ]         = TARGET_INT_MAX,
+    [ CONST_MOD_UNSIGNED_INT ]       = TARGET_UINT_MAX,
+    [ CONST_MOD_SIGNED_LONG ]        = TARGET_LONG_MAX,
+    [ CONST_MOD_UNSIGNED_LONG ]      = TARGET_ULONG_MAX,
+    [ CONST_MOD_SIGNED_LONG_LONG ]   = TARGET_LLONG_MAX,
+    [ CONST_MOD_UNSIGNED_LONG_LONG ] = TARGET_ULLONG_MAX
 };
 
 static const int signed_dec_const_types[] = {

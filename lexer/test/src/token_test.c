@@ -2,10 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include "token.h"
-#include "string_token.c"
-#include "keyword_token.c"
-#include "punctuator_token.c"
-#include "directive_token.c"
+#include "constants.h"
 
 int main ( int argc, char** argv ) {
 
