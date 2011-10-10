@@ -107,7 +107,7 @@ static bool read_overflows ( const char* str, int flag,
 
             return *num == TARGET_ULLONG_MAX &&
                    ( includes( dec_digit_character, DEC_ULLONG_MAX_LEN ) ||
-                     strncmp( str, dec_ullong_max, DEC_ULLONG_MAX_LEN ) != 0 );
+                      strncmp( str, dec_ullong_max, DEC_ULLONG_MAX_LEN ) != 0 );
 
 
         case 1: /* octal */
@@ -116,13 +116,12 @@ static bool read_overflows ( const char* str, int flag,
 
             return *num == TARGET_ULLONG_MAX &&
                    ( includes( oct_digit_character, OCT_ULLONG_MAX_LEN ) ||
-                     strncmp( str, oct_ullong_max, OCT_ULLONG_MAX_LEN ) != 0 );
+                      strncmp( str, oct_ullong_max, OCT_ULLONG_MAX_LEN ) != 0 );
 
         case 2: /* hexadecimal */
 
             sscanf( str, "%llx", num );
 
-            /* 0xFFFFFFFFFFFFFFFF */
             if ( *num == TARGET_ULLONG_MAX ) {
 
                 if ( includes( hex_digit_character, HEX_ULLONG_MAX_LEN ) )
@@ -137,6 +136,8 @@ static bool read_overflows ( const char* str, int flag,
             }
             return false;
     }
+
+    #undef includes
 
     /* Should never reach this */
     return false;
