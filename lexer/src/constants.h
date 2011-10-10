@@ -95,7 +95,7 @@ static const char keywords[][11] = {
     "unsigned",
     "void",
     "volatile",
-    "while",
+    "while"
 };
 
 #define NUM_PUNCTUATORS   ( sizeof( punctuators ) / sizeof( punctuators[0] ) )
