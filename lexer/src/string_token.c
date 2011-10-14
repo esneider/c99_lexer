@@ -1,26 +1,29 @@
 #include <stdbool.h>
+#include "token.h"
 
 
-static size_t is_string ( const char* token ) {
+static bool is_string ( const char* token, struct token* ret ) {
 
-    size_t ret = 2;
+    ret->len  = 2;
+    ret->type = TOK_STRING;
 
     if ( token[0] == 'L' ) {
+
         token++;
-        ret++;
+        ret->len++;
     }
 
     if ( token++[0] != '"' )
-        return 0;
+         return false;
 
-    for ( bool slash = false; token[0] != '"' || slash; token++, ret++ ) {
+    for ( bool slash = false; token[0] != '"' || slash; token++, ret->len++ ) {
 
         slash = !slash && token[0] == '\\';
 
         if ( !token[0] || token[0] == '\n' )
-            return 0;
+            return false;
     }
 
-    return ret;
+    return true;
 }
 

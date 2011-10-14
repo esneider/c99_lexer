@@ -1,20 +1,23 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include "token.h"
 #include "constants.h"
 
 
-static size_t is_identifier ( const char* token ) {
+static bool is_identifier ( const char* token, struct token* ret ) {
 
     if ( strchr( dec_digit_character, token[0] ) )
-        return 0;
+        return false;
 
-    size_t len = 0, aux;
+    ret->len  = 0;
+    ret->type = TOK_IDENTIFIER;
 
-    for ( ; ; ) {
+    for ( size_t aux; ; ) {
 
-        len += aux = strspn( token, identifier_character );
-        token += aux;
+        ret->len += aux = strspn( token, identifier_character );
+        token    += aux;
 
         /* check for universal character name (aka \uxxxx or \Uxxxxxxxx) */
 
@@ -24,14 +27,14 @@ static size_t is_identifier ( const char* token ) {
         aux = strspn( token + 2, hex_digit_character );
 
         if ( aux < ( 4 << ( token[1] == 'U' ) ) )
-            return 0;
+            return false;
 
-        len += 2 + aux;
-        token += 2 + aux;
+        ret->len += 2 + aux;
+        token    += 2 + aux;
 
         /* and again */
     }
 
-    return len;
+    return true;
 }
 

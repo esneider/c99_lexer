@@ -124,13 +124,8 @@ static void next_token_end ( struct token_head* head, struct token* token ) {
     }
 
     /* check for literal strings */
-    token->len = is_string( token->ptr );
-
-    if ( token->len ) {
-
-        token->type = TOK_STRING;
+    if ( is_string( token->ptr, token ) )
         return;
-    }
 
     /* now for constants */
     struct constant con = is_constant( token->ptr );
@@ -146,9 +141,7 @@ static void next_token_end ( struct token_head* head, struct token* token ) {
     }
 
     /* check for identifiers and keywords */
-    token->len = is_identifier( token->ptr );
-
-    if ( token->len ) {
+    if ( is_identifier( token->ptr, token ) ) {
 
         char c = token->ptr[ token->len ];
         token->ptr[ token->len ] = 0;
