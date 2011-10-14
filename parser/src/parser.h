@@ -3,7 +3,6 @@
 
 
 #include <stdlib.h>
-#include "lexer.h"
 #include "declarations.h"
 #include "functions.h"
 
