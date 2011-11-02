@@ -13,7 +13,7 @@ PREPROCESSOR  =
 
 LIBRARIES     =
 
-SOURCES       = src/token
+SOURCES       = src/token test/src/token_test
 
 SOURCES_DIRS  =
 
@@ -23,7 +23,7 @@ OBJECTS_DIRS  =
 
 OUTPUT_DIR    = obj
 
-TARGET        =
+TARGET        = token_test
 
 MAKE_FILES    =
 
@@ -56,7 +56,7 @@ debug: compile
 release: override C_FLAGS += $(RELEASE_FLAGS)
 release: compile
 
-compile: clean output $(SRC_DIR) $(SRC)
+compile: clean output $(SRC_DIR) $(SRC) $(TARGET)
 
 $(SRC_DIR):
 	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@)/*.c
@@ -64,8 +64,10 @@ $(SRC_DIR):
 $(SRC):
 	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@).c
 
+$(TARGET):
+	$(CC) $(C_FLAGS) -I $(OUTPUT_DIR) -o $(TARGET)
 clean:
-	@rm -rf $(OUTPUT_DIR)
+	@rm -rf $(OUTPUT_DIR) $(TARGET)
 
 output:
 	@mkdir -p $(OUTPUT_DIR)
