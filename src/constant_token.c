@@ -245,7 +245,7 @@ static struct constant get_float( const char* token, bool empty, bool hex,
         token++;
     }
 
-    if ( strchr( identifier_character, *token ) )
+    if ( *token && strchr( identifier_character, *token ) )
 
         return (struct constant){ 0, CONST_NONE, 0 };
 
@@ -320,7 +320,8 @@ static struct constant is_constant ( const char* token ) {
 
         get_integer_modifier( token, &ret );
 
-        if ( strchr( identifier_character, original_token[ ret.len ] ) )
+        if ( original_token[ ret.len ] &&
+             strchr( identifier_character, original_token[ ret.len ] ) )
 
             return (struct constant){ 0, CONST_NONE, 0 };
 

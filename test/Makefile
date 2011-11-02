@@ -57,7 +57,7 @@ release: compile
 compile: output $(OBJS)
 
 $(OBJS): %.o: %.c
-	$(CC) $(C_FLAGS) $(OBJECT_DIRS)/*.o $(<) -o $(OUTPUT_DIR)$(@F:.o=)
+	$(CC) $(C_FLAGS) $(OBJECT_DIRS)/token.o $(<) -o $(OUTPUT_DIR)$(@F:.o=)
 
 clean:
 	@rm -rf $(OUTPUT_DIR)

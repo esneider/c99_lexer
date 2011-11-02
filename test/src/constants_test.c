@@ -63,13 +63,13 @@ struct constant expect[] = {
     { 7,  CONST_CHARACTER,            CONST_MOD_SIGNED_INT },
     { 7,  CONST_CHARACTER,            CONST_MOD_WIDE_CHARACTER },
     { 7,  CONST_DECIMAL,              CONST_MOD_UNSIGNED_LONG_LONG },
-    { 5,  CONST_DECIMAL,              CONST_MOD_UNSIGNED_LONG },
+    { 0,  CONST_NONE,                 0 },
     { 6,  CONST_OCTAL,                CONST_MOD_UNSIGNED_INT },
     { 2,  CONST_DECIMAL,              CONST_MOD_SIGNED_LONG },
     { 1,  CONST_DECIMAL,              CONST_MOD_SIGNED_INT },
     { 10, CONST_HEXADECIMAL,          CONST_MOD_SIGNED_LONG_LONG },
     { 7,  CONST_HEXADECIMAL,          CONST_MOD_SIGNED_INT },
-    { 6,  CONST_HEXADECIMAL,          CONST_MOD_SIGNED_INT },
+    { 0,  CONST_NONE,                 0 },
     { 14, CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
     { 4,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
     { 4,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
@@ -80,7 +80,7 @@ struct constant expect[] = {
     { 0,  CONST_NONE,                 0 },
     { 7,  CONST_DECIMAL_FLOATING,     CONST_MOD_DOUBLE },
     { 16, CONST_HEXADECIMAL_FLOATING, CONST_MOD_DOUBLE },
-    { 15, CONST_HEXADECIMAL_FLOATING, CONST_MOD_DOUBLE },
+    { 0,  CONST_NONE,                 0 }
 };
 
 

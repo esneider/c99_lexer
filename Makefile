@@ -66,6 +66,7 @@ $(SRC):
 
 $(TARGET):
 	$(CC) $(C_FLAGS) $(OUTPUT_DIR)/*.o -o $(TARGET)
+
 clean:
 	@rm -rf $(OUTPUT_DIR) $(TARGET)
 
