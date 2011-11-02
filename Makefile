@@ -65,7 +65,7 @@ $(SRC):
 	cd $(OUTPUT_DIR) && $(CC) $(C_FLAGS) -c $(@).c
 
 $(TARGET):
-	$(CC) $(C_FLAGS) -I $(OUTPUT_DIR) -o $(TARGET)
+	$(CC) $(C_FLAGS) $(OUTPUT_DIR)/*.o -o $(TARGET)
 clean:
 	@rm -rf $(OUTPUT_DIR) $(TARGET)
 
