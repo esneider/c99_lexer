@@ -145,7 +145,7 @@ static bool read_overflows ( const char* str, int flag,
 
 
 static struct constant check_integer_type ( const char* str, int flag,
-                                            struct constant ret )
+                                           struct constant ret )
 {
     unsigned long long num;
 
@@ -280,8 +280,6 @@ static struct constant is_constant ( const char* token ) {
     bool empty, zero, hex;
     size_t aux;
 
-git clone ~/Documents/Kindle/ ./
-fatal: destination path '.' already exists and is not an empty directory.
     empty = zero = hex = false;
 
     if ( token[0] == '0' ) {
